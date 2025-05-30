@@ -1,0 +1,141 @@
+CREATE TABLE Drugs (
+    Curr_Rank INTEGER,
+    Prev_Rank INTEGER,
+    Drug_Name VARCHAR(100) PRIMARY KEY,
+    Category VARCHAR(100),
+    Utilizers INTEGER,
+    Claims INTEGER,
+    Plan_Cost DECIMAL(18,2),
+    Percent_of_Total_Plan_Cost DECIMAL(5,2),
+    Plan_Cost_PMPM DECIMAL(10,2),
+    Plan_Cost_Per_Claim DECIMAL(12,2),
+    Member_Cost_Per_Claim DECIMAL(10,2),
+    Member_Cost_Share DECIMAL(5,2),
+    Prev_Utilizers INTEGER,
+    Prev_Claims INTEGER,
+    Prev_Plan_Cost DECIMAL(18,2),
+    Claims_PMPM_Trend DECIMAL(6,2),
+    Plan_Cost_Per_Claim_Trend DECIMAL(6,2),
+    Plan_Cost_PMPM_Trend DECIMAL(6,2),
+    Plan_Cost_Trend DECIMAL(6,2),
+    Srx BOOLEAN
+);
+
+CREATE TABLE Diseases_By_Channel (
+    Curr_Rank INTEGER,
+    Prev_Rank INTEGER,
+    Disease VARCHAR(100),
+    Home_Infusion DECIMAL(18,2),
+    Outpatient_Hospital DECIMAL(18,2),
+    Physician_Office DECIMAL(18,2),
+    Pharmacy DECIMAL(18,2),
+    Total DECIMAL(18,2)
+);
+
+CREATE TABLE Pharmacies (
+    Pharmacy_ID VARCHAR(20) PRIMARY KEY,
+    Pharmacy_Name VARCHAR(100),
+    Current_Period_Total DECIMAL(18,2),
+    Home_Infusion DECIMAL(18,2),
+    Outpatient_Hospital DECIMAL(18,2),
+    Physician_Office DECIMAL(18,2),
+    Pharmacy DECIMAL(18,2),
+    Previous_Period_Total DECIMAL(18,2)
+);
+
+CREATE TABLE Members (
+    Member_ID VARCHAR(20) PRIMARY KEY,
+    Current_Period_Total DECIMAL(18,2),
+    Home_Infusion DECIMAL(18,2),
+    Outpatient_Hospital DECIMAL(18,2),
+    Physician_Office DECIMAL(18,2),
+    Pharmacy DECIMAL(18,2),
+    Previous_Period_Total DECIMAL(18,2),
+    Top_Category VARCHAR(100),
+    Top_Category_Percent_of_Total DECIMAL(5,2),
+    Top_Diagnosis_Code VARCHAR(20),
+    Top_Disease VARCHAR(100),
+    Top_Disease_Percent_of_Total DECIMAL(5,2),
+    Member_Notes VARCHAR(255),
+    Client VARCHAR(100),
+    Group_1 VARCHAR(100),
+    Group_2 VARCHAR(100),
+    Group_3 VARCHAR(100),
+    Group_4 VARCHAR(100),
+    First_Name VARCHAR(50),
+    Last_Name VARCHAR(50),
+    DOB DATE,
+    Age INTEGER,
+    Gender VARCHAR(10),
+    City VARCHAR(100),
+    State VARCHAR(10),
+    Zip_Code VARCHAR(20)
+);
+
+CREATE TABLE Diseases (
+    Curr_Rank INTEGER,
+    Prev_Rank INTEGER,
+    Disease VARCHAR(100) PRIMARY KEY,
+    Utilizers INTEGER,
+    Claims INTEGER,
+    Plan_Cost DECIMAL(18,2),
+    Percent_of_Total_Plan_Cost DECIMAL(5,2),
+    Plan_Cost_PMPM DECIMAL(10,2),
+    Plan_Cost_Per_Claim DECIMAL(12,2),
+    Member_Cost_Share DECIMAL(5,2),
+    Prev_Utilizers INTEGER,
+    Prev_Claims INTEGER,
+    Prev_Plan_Cost DECIMAL(18,2),
+    Plan_Cost_Trend DECIMAL(6,2),
+    Claims_PMPM_Trend DECIMAL(6,2),
+    Plan_Cost_Per_Claim_Trend DECIMAL(6,2),
+    Plan_Cost_PMPM_Trend DECIMAL(6,2)
+);
+
+CREATE TABLE Member_Costs (
+    Member_ID VARCHAR(20),
+    Member_DOB DATE,
+    Category VARCHAR(100),
+    Drug_Name VARCHAR(100),
+    Claims INTEGER,
+    Gross_Cost DECIMAL(18,2),
+    Plan_Cost DECIMAL(18,2),
+    Client VARCHAR(100),
+    Group_1 VARCHAR(100),
+    Group_2 VARCHAR(100),
+    Group_3 VARCHAR(100),
+    Group_4 VARCHAR(100),
+    First_Name VARCHAR(50),
+    Last_Name VARCHAR(50),
+    Age INTEGER,
+    Gender VARCHAR(10),
+    City VARCHAR(100),
+    State VARCHAR(10),
+    Zip_Code VARCHAR(20),
+    Member_Notes VARCHAR(255),
+    FOREIGN KEY (Member_ID) REFERENCES Members(Member_ID),
+    FOREIGN KEY (Drug_Name) REFERENCES Drugs(Drug_Name),
+    FOREIGN KEY (Category) REFERENCES Diseases(Disease)
+);
+
+CREATE TABLE Cost_Of_Care (
+    Member_ID VARCHAR(20),
+    Diabetes_related_Percent_of_Total_Cost DECIMAL(5,2),
+    Diabetes_related_Drug_Percent_of_Total_Cost DECIMAL(5,2),
+    Diabetes_related_Specialty_Medical_Drug_Cost DECIMAL(18,2),
+    Diabetes_related_Medical_Other_Cost DECIMAL(18,2),
+    Diabetes_related_Pharmacy_Cost DECIMAL(18,2),
+    Diabetes_related_Count_of_Drugs INTEGER,
+    Diabetes_related_Top_Drug VARCHAR(100),
+    Diabetes_related_Inpatient_Days INTEGER,
+    Diabetes_related_ER_Encounters INTEGER,
+    Non_Diabetes_related_Medical_Cost DECIMAL(18,2),
+    Non_Diabetes_related_Pharmacy_Cost DECIMAL(18,2),
+    Total_Count_of_Drugs INTEGER,
+    Total_Inpatient_Days INTEGER,
+    Total_ER_Encounters INTEGER,
+    Medical_Percent_of_Total_Cost DECIMAL(5,2),
+    Total_Cost DECIMAL(18,2),
+    FOREIGN KEY (Member_ID) REFERENCES Members(Member_ID),
+    FOREIGN KEY (Diabetes_related_Top_Drug) REFERENCES Drugs(Drug_Name)
+);
