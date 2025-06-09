@@ -1,8 +1,10 @@
-import getpass
 import os
+from dotenv import load_dotenv
+
+load_dotenv()
 
 if not os.environ.get("OPENAI_API_KEY"):
-	os.environ["OPENAI_API_KEY"] = getpass.getpass("Enter API key for OpenAI: ")
+	os.environ["OPENAI_API_KEY"] = os.getenv("OPENAI_API_KEY")
 
 from langchain.chat_models import init_chat_model
 

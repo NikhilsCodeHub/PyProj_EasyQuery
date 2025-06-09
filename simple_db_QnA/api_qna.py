@@ -11,7 +11,7 @@ class State(TypedDict):
     answer: str
 
 
-## ------
+## ------ Step 1: System Prompt to Write Query
 
 from langchain_core.prompts import ChatPromptTemplate
 
@@ -29,7 +29,7 @@ Pay attention to use only the column names that you can see in the schema
 description. Be careful to not query for columns that do not exist. Also,
 pay attention to which column is in which table.
 
-DO NOT make any DML statements (INSERT, UPDATE, DELETE, DROP etc.) to the database.
+DO NOT make any statements that contain (INSERT, UPDATE, DELETE, DROP etc.) to the database.
 Output only 1 query even for multiple questions. 
 Include the column names in the output.
 Do not add any explanation. Do not add any comments.
@@ -47,7 +47,7 @@ query_prompt_template = ChatPromptTemplate(
 for message in query_prompt_template.messages:
     message.pretty_print()
 
-## ------
+## ------ Step 2: Generate Query
 
 from typing_extensions import Annotated
 
@@ -63,7 +63,7 @@ def write_query(state: State):
     prompt = query_prompt_template.invoke(
         {
             "dialect": db.dialect,
-            "top_k": 10,
+            "top_k": 100,
             "table_info": db.get_table_info(),
             "input": state["question"],
         }
@@ -75,7 +75,7 @@ def write_query(state: State):
     result = structured_llm.invoke(prompt)
     return {"query": result["query"]}
 
-## ------
+## ------ Step 3: Execute Query
 
 from langchain_community.tools.sql_database.tool import QuerySQLDatabaseTool
 
@@ -85,7 +85,7 @@ def execute_query(state: State):
     execute_query_tool = QuerySQLDatabaseTool(db=db)
     return {"result": execute_query_tool.invoke(state["query"])}
 
-## ------
+## ------ Step 4: Generate Answer based on Query and Result
 
 def generate_answer(state: State):
     """Answer question using retrieved information as context."""
@@ -96,8 +96,9 @@ def generate_answer(state: State):
         f'SQL Query: {state["query"]}\n'
         f'SQL Result: {state["result"]}'
     )
-    response = llm.invoke(prompt)
-    return {"answer": response.content}
+    # response = llm.invoke(prompt)
+    response = "Deliberately empty response"
+    return {"answer": response}
 
 ## ------
 
@@ -111,9 +112,26 @@ graph = graph_builder.compile()
 
 ## ------
 
-str_query = ""
-str_result = ""
-str_answer = ""
 
 
+
+""" 
+for step in graph.stream(
+    {"question": "Which members have the highest total cost?"}, stream_mode="updates"
+#    {"question": "Can we see a breakdown of Aerosmith's revenue by album or track for each of those years to identify their top-performing content? ?"}, stream_mode="updates"
+):
+    print("Step:", step)
+    if "write_query" in step:
+        str_query = step["write_query"]["query"]
+    if "execute_query" in step:
+        str_result = step["execute_query"]["result"]
+    if "generate_answer" in step:
+        str_answer = step["generate_answer"]["answer"]
+    # if "Followup_Questions" in step:
+    #     followup_questions = step["FollowupQuestions"]["Followup_Questions"]
+    print("Query :", str_query)
+    print("Result :", str_result)
+    print("Answer :", str_answer)
+    # print("Followup Questions :", followup_questions)
+ """
 
