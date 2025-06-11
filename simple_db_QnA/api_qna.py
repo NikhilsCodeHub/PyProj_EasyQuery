@@ -64,7 +64,7 @@ def write_query(state: State):
         {
             "dialect": db.dialect,
             "top_k": 100,
-            "table_info": db.get_table_info(),
+            "table_info": db.get_table_info(["claim","drug"], include_columns=True),
             "input": state["question"],
         }
     )

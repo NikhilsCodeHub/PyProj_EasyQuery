@@ -32,7 +32,7 @@ def example_with_direct_api():
     
     '''
     
-    tables_to_transfer = ["[dbo].[CLIENT]", "[AO].[drug]"]
+    tables_to_transfer = ["[AO].[Providers]","[AO].[drug_category]","[AO].[drug_name]"]
     
     # Initialize the transfer object
     transfer = SQLServerToSQLite(
