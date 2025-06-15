@@ -86,8 +86,10 @@
 
                             if (parsedData && parsedData.length > 0) {
                                 // Extract headers (first row)
-                                const headers = parsedData.shift();
-
+                                //const headers = parsedData.shift();
+                                
+                                const headers = response.columns;
+                                
                                 // Format headers for DataTables columns option
                                 const columns = headers.map(header => ({ title: header }));
 

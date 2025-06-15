@@ -2,11 +2,12 @@
 from db_connection import db
 from llm_config import llm
 from typing_extensions import TypedDict
-
+import ast
 
 class State(TypedDict):
     question: str
     query: str
+    columns: list[str]
     result: str
     answer: str
 
@@ -64,7 +65,7 @@ def write_query(state: State):
         {
             "dialect": db.dialect,
             "top_k": 100,
-            "table_info": db.get_table_info(),
+            "table_info": db.get_table_info(['RX_CLAIM', 'drug']),
             "input": state["question"],
         }
     )
@@ -75,7 +76,25 @@ def write_query(state: State):
     result = structured_llm.invoke(prompt)
     return {"query": result["query"]}
 
-## ------ Step 3: Execute Query
+## ------ Step 3 : Extract columns from query
+from typing_extensions import Annotated
+
+class ColumnOutput(TypedDict):
+    columns: Annotated[list[str], "List of column names in the SELECT statement, in order."]
+
+def extract_columns(state: State):
+    """Use LLM to extract column names from the SQL query."""
+    prompt = (
+        "Given the following SQL query, list the column names that will appear in the result set, in order, as a Python list of strings.\n\n"
+        f"SQL Query:\n{state['query']}\n\n"
+        "Columns:"
+    )
+    structured_llm = llm.with_structured_output(ColumnOutput)
+    result = structured_llm.invoke(prompt)
+    return {"columns": result["columns"]}
+
+
+## ------ Step 4: Execute Query
 
 from langchain_community.tools.sql_database.tool import QuerySQLDatabaseTool
 
@@ -85,7 +104,7 @@ def execute_query(state: State):
     execute_query_tool = QuerySQLDatabaseTool(db=db)
     return {"result": execute_query_tool.invoke(state["query"])}
 
-## ------ Step 4: Generate Answer based on Query and Result
+## ------ Step 5: Generate Answer based on Query and Result
 
 def generate_answer(state: State):
     """Answer question using retrieved information as context."""
@@ -96,8 +115,15 @@ def generate_answer(state: State):
         f'SQL Query: {state["query"]}\n'
         f'SQL Result: {state["result"]}'
     )
-    # response = llm.invoke(prompt)
-    response = "Deliberately empty response"
+
+    if len(ast.literal_eval(state["result"])[0]) > 3 or len(ast.literal_eval(state["result"])) > 5:
+        response = "Result has too many value to send to LLM. Use datatable to show data. tuples {},length {}".format(
+            len(state["result"][0]), len(state["result"])
+        )
+    else:
+        # Use the LLM to generate an answer based on the prompt
+        response = llm.invoke(prompt)
+    #response = "Deliberately empty response"
     return {"answer": response}
 
 ## ------
@@ -105,7 +131,7 @@ def generate_answer(state: State):
 from langgraph.graph import START, StateGraph
 
 graph_builder = StateGraph(State).add_sequence(
-    [write_query, execute_query, generate_answer]
+    [write_query, extract_columns, execute_query, generate_answer]
 )
 graph_builder.add_edge(START, "write_query")
 graph = graph_builder.compile()

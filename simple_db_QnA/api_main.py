@@ -12,6 +12,7 @@ class QnARequest(BaseModel):
     question: str
 
 str_query = ""
+str_columns = ""
 str_result = ""
 str_answer = ""
 
@@ -32,11 +33,13 @@ async def qna_response(qna_request: QnARequest):
         print("Step:", step)
         if "write_query" in step:
             str_query = step["write_query"]["query"]
+        if "extract_columns" in step:
+            str_columns = step["extract_columns"]["columns"]
         if "execute_query" in step:
             str_result = step["execute_query"]["result"]
         if "generate_answer" in step:
             str_answer = step["generate_answer"]["answer"]
-    return {"query": str_query, "result": parse_result_string(str_result), "answer": str_answer}
+    return {"query": str_query, "columns" : str_columns, "result": parse_result_string(str_result), "answer": str_answer}
 
 
 @app.post("/api/v1/qna")
