@@ -21,6 +21,8 @@ $.ajax({
     }
 });
 
+-- Load Dynamically via Console 
+document.head.appendChild(Object.assign(document.createElement('script'), {src: 'http://127.0.0.1:8123/tests/sideload.js', onload: () => console.log('Loaded!')}));
 
 
 
