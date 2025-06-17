@@ -69,7 +69,7 @@ def write_query(state: State):
             "input": state["question"],
         }
     )
-    print("Prompt:", prompt)
+    print("Prompt:", prompt)    
     # print("Prompt:", prompt.messages[1].content)
 
     structured_llm = llm.with_structured_output(QueryOutput)
