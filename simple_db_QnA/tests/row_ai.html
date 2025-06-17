@@ -1,0 +1,234 @@
+    <script>
+        $(document).ready(function() {
+            // Reference to the DataTable instance
+            let dataTableInstance = null;
+
+            // Function to fetch data from the API and populate the table
+            $('#submitQuestion').on('click', function() {
+                const question = $('#questionInput').val();
+                if (!question) {
+                    $('#errorMessage').text('Please enter a question.').show();
+                    $('#tableContainer').hide();
+                    return;
+                }
+
+                $('#loadingMessage').show();
+                $('#errorMessage').hide();
+                $('#tableContainer').hide(); // Hide table while loading
+
+                // Replace 'YOUR_API_ENDPOINT' with the actual URL of your FastAPI endpoint
+                const apiEndpoint = 'http://127.0.0.1:8123/api/v2/qna'; // e.g., 'http://127.0.0.1:8000/query' or whatever your FastAPI endpoint is
+
+                $.ajax({
+                    url: apiEndpoint,
+                    type: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify({ question: question }), // Send the question as JSON
+                    success: function(response) {
+                        $('#loadingMessage').hide();
+
+                        if (response && response.result) {
+                            const parsedData = response.result;
+
+                            if (parsedData && parsedData.length > 0) {
+                                // Extract headers (first row)
+                                const headers = parsedData.shift();
+
+                                // Format headers for DataTables columns option
+                                const columns = headers.map(header => ({ title: header }));
+
+                                // Destroy existing DataTable instance if it exists
+                                if (dataTableInstance) {
+                                    dataTableInstance.destroy();
+                                    $('#myDataTable thead').empty(); // Clear old headers
+                                    $('#myDataTable tbody').empty(); // Clear old body
+                                }
+
+                                // Initialize DataTables with new data
+                                dataTableInstance = $('#myDataTable').DataTable({
+                                    data: parsedData,
+                                    columns: columns,
+                                    paging: true,
+                                    searching: true,
+                                    ordering: true,
+                                    info: true,
+                                    destroy: true // Allow re-initialization if needed later
+                                });
+                                $('#tableContainer').show(); // Show table after data is loaded
+                            } else {
+                                $('#errorMessage').text('No data returned from the API or result was empty.').show();
+                                $('#tableContainer').hide();
+                            }
+                        } else {
+                            $('#errorMessage').text('Invalid API response format (missing "result" key).').show();
+                            $('#tableContainer').hide();
+                        }
+                    },
+                    error: function(jqXHR, textStatus, errorThrown) {
+                        $('#loadingMessage').hide();
+                        $('#errorMessage').text('API Error: ' + textStatus + ' - ' + errorThrown).show();
+                        console.error("AJAX error:", textStatus, errorThrown, jqXHR.responseText);
+                        $('#tableContainer').hide();
+                    }
+                });
+            });
+        });
+    </script>
+<style>
+/* ===== BUTTONS ===== */
+.btn {
+  text-transform: uppercase;
+  box-shadow: none !important;
+  padding: 0.3125rem 1rem;
+}
+.btn.btn-square {
+  border-radius: 0px;
+}
+.btn.btn-pill {
+  border-radius: 20px;
+}
+@media (min-width: 768px) {
+  .btn.btn-pill {
+    border-radius: 30px;
+  }
+}
+@media (min-width: 768px) {
+  .btn {
+    padding: 0.56rem 1.5rem;
+  }
+}
+
+/* Button Circle */
+.btn-rounded-circle {
+  border-radius: 50%;
+}
+
+/* Button Icon */
+.btn-icon {
+  width: 43px;
+  height: 43px;
+  padding: 0.312rem 0.625rem;
+  color: #ffffff;
+  font-size: 1.25rem;
+}
+.btn-icon:hover {
+  color: #ffffff;
+}
+
+/* Button Refress */
+.btn-refress {
+  background: #f0f1f5;
+  padding: 0 0.375rem;
+  font-size: 1.0625rem;
+}
+
+.btn-dark {
+  color: #fff;
+  background-color: #454545;
+  border-color: #454545; }
+  .btn-dark:hover {
+    color: #fff;
+    background-color: #323232;
+    border-color: #2c2c2c; }
+  .btn-dark:focus, .btn-dark.focus {
+    box-shadow: 0 0 0 0.2rem rgba(97, 97, 97, 0.5); }
+  .btn-dark.disabled, .btn-dark:disabled {
+    color: #fff;
+    background-color: #454545;
+    border-color: #454545; }
+  .btn-dark:not(:disabled):not(.disabled):active, .btn-dark:not(:disabled):not(.disabled).active,
+  .show > .btn-dark.dropdown-toggle {
+    color: #fff;
+    background-color: #2c2c2c;
+    border-color: #252525; }
+    .btn-dark:not(:disabled):not(.disabled):active:focus, .btn-dark:not(:disabled):not(.disabled).active:focus,
+    .show > .btn-dark.dropdown-toggle:focus {
+      box-shadow: 0 0 0 0.2rem rgba(97, 97, 97, 0.5); }
+  </style>
+
+<div class="col-xl-8">
+
+  <!-- Sales by Product -->
+  <div class="card card-default">
+    <div class="card-header align-items-center">
+      <h2 class="">Ai Agent Response</h2>
+    </div>
+    <div class="card-body">
+      <div class="tab-content" id="tableContainer" style="display: none;">
+        <table id="myDataTable" class="table table-product" style="width:100%">
+            <thead>
+                </thead>
+            <tbody>
+                </tbody>
+        </table>
+      </div>
+      <div id="loadingMessage" style="display: none; color: blue;">Loading data...</div>
+      <div id="errorMessage" style="display: none; color: red;"></div>
+    </div>
+  </div>
+
+</div>
+<div class="col-xl-4">
+
+  <!-- Chat -->
+  <div class="card card-default chat">
+    <div class="card-header">
+      <h2>QnA</h2>
+      <div class="dropdown dropdown-chat-state">
+
+      </div>
+    </div>
+    <div class="card-body pb-0" data-simplebar style="height: 363px;">
+      <!-- Media Chat Left -->
+      <div class="media media-chat">
+        <img src="images/user/user-sm-01.jpg" class="rounded-circle" alt="Avata Image">
+        <div class="media-body">
+          <div class="text-content">
+            <span class="message">Hello my name is anna.</span>
+            <time class="time">5 mins ago</time>
+          </div>
+        </div>
+      </div>
+
+      <!-- Media Chat Right -->
+      <div class="media media-chat media-chat-right">
+        <div class="media-body">
+          <div class="text-content">
+            <span class="message">Hello i am Riman.</span>
+            <time class="time">4 mins ago</time>
+          </div>
+          <div class="text-content">
+            <span class="message">I want to know about yourself</span>
+            <time class="time">3 mins ago</time>
+          </div>
+        </div>
+        <img src="images/user/user-sm-02.jpg" class="rounded-circle" alt="Avata Image">
+      </div>
+
+      <!-- Media Chat Left -->
+      <div class="media media-chat">
+        <img src="images/user/user-sm-01.jpg" class="rounded-circle" alt="Avata Image">
+        <div class="media-body">
+          <div class="text-content">
+            <span class="message">Its had resolving otherwise she contented therefore.</span>
+            <time class="time">1 mins ago</time>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="chat-footer">
+      <form>
+        <div class="input-group input-group-chat">
+          <textarea class="form-control" rows="4" id="questionInput" placeholder="Enter your query here (e.g., 'Show top 10 diseases')"></textarea>
+          </div>
+        <div class="text-center mt-4 mb-5">
+          <button id="submitQuestion" class="btn btn-primary btn-sl-sm mr-3" type="button"><span
+                  class="mr-2"><i class="fa fa-paper-plane"></i></span> Send</button>
+          <button class="btn btn-dark btn-sl-sm" type="button"><span class="mr-2"><i
+                      class="fa fa-times" aria-hidden="true"></i></span> Discard</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+</div>
