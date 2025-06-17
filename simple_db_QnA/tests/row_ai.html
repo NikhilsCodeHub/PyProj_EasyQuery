@@ -1,0 +1,306 @@
+<style>
+/* ===== BUTTONS ===== */
+.btn {
+  text-transform: uppercase;
+  box-shadow: none !important;
+  padding: 0.3125rem 1rem;
+}
+.btn.btn-square {
+  border-radius: 0px;
+}
+.btn.btn-pill {
+  border-radius: 20px;
+}
+@media (min-width: 768px) {
+  .btn.btn-pill {
+    border-radius: 30px;
+  }
+}
+@media (min-width: 768px) {
+  .btn {
+    padding: 0.56rem 1.5rem;
+  }
+}
+
+/* Button Circle */
+.btn-rounded-circle {
+  border-radius: 50%;
+}
+
+/* Button Icon */
+.btn-icon {
+  width: 43px;
+  height: 43px;
+  padding: 0.312rem 0.625rem;
+  color: #ffffff;
+  font-size: 1.25rem;
+}
+.btn-icon:hover {
+  color: #ffffff;
+}
+
+/* Button Refress */
+.btn-refress {
+  background: #f0f1f5;
+  padding: 0 0.375rem;
+  font-size: 1.0625rem;
+}
+
+.btn-dark {
+  color: #fff;
+  background-color: #454545;
+  border-color: #454545; }
+  .btn-dark:hover {
+    color: #fff;
+    background-color: #323232;
+    border-color: #2c2c2c; }
+  .btn-dark:focus, .btn-dark.focus {
+    box-shadow: 0 0 0 0.2rem rgba(97, 97, 97, 0.5); }
+  .btn-dark.disabled, .btn-dark:disabled {
+    color: #fff;
+    background-color: #454545;
+    border-color: #454545; }
+  .btn-dark:not(:disabled):not(.disabled):active, .btn-dark:not(:disabled):not(.disabled).active,
+  .show > .btn-dark.dropdown-toggle {
+    color: #fff;
+    background-color: #2c2c2c;
+    border-color: #252525; }
+    .btn-dark:not(:disabled):not(.disabled):active:focus, .btn-dark:not(:disabled):not(.disabled).active:focus,
+    .show > .btn-dark.dropdown-toggle:focus {
+      box-shadow: 0 0 0 0.2rem rgba(97, 97, 97, 0.5); }
+  </style>
+
+<div class="col-xl-8">
+
+  <!-- Sales by Product -->
+  <div class="card card-default">
+    <div class="card-header align-items-center">
+      <h2 class="">Ai Agent Response</h2>
+    </div>
+    <div class="card-body">
+      <div class="tab-content">
+        <table id="product-sale" class="table table-product" style="width:100%">
+          <thead>
+            <tr>
+              <th>Product Name</th>
+              <th>Unit</th>
+              <th>Amount</th>
+              <th>%sold</th>
+              <th class="th-width-250"></th>
+            </tr>
+          </thead>
+          <tbody>
+
+            <tr>
+              <td>Coach Swagger</td>
+              <td>134</td>
+              <td>$24541</td>
+              <td>35.28%</td>
+              <td>
+                <div class="progress progress-md rounded-0">
+                  <div class="progress-bar" role="progressbar" style="width: 70%" aria-valuenow="70%"
+                    aria-valuemin="0" aria-valuemax="100"></div>
+                </div>
+              </td>
+            </tr>
+
+            <tr>
+              <td>Toddler Shoes</td>
+              <td>119</td>
+              <td>$20225</td>
+              <td>27.05%</td>
+              <td>
+                <div class="progress progress-md rounded-0">
+                  <div class="progress-bar" role="progressbar" style="width: 55%" aria-valuenow="55%"
+                    aria-valuemin="0" aria-valuemax="100"></div>
+                </div>
+              </td>
+            </tr>
+
+            <tr>
+              <td>Hat Black Suits</td>
+              <td>101</td>
+              <td>$17,290</td>
+              <td>20.25%</td>
+              <td>
+                <div class="progress progress-md rounded-0">
+                  <div class="progress-bar" role="progressbar" style="width: 45%" aria-valuenow="45%"
+                    aria-valuemin="0" aria-valuemax="100"></div>
+                </div>
+              </td>
+            </tr>
+
+            <tr>
+              <td>Backpack Gents</td>
+              <td>59</td>
+              <td>$1150</td>
+              <td>12.50%</td>
+              <td>
+                <div class="progress progress-md rounded-0">
+                  <div class="progress-bar" role="progressbar" style="width: 25%" aria-valuenow="25%"
+                    aria-valuemin="0" aria-valuemax="100"></div>
+                </div>
+              </td>
+            </tr>
+
+            <tr>
+              <td>Speed 500 Ignite</td>
+              <td>25</td>
+              <td>$590</td>
+              <td>02.10%</td>
+              <td>
+                <div class="progress progress-md rounded-0">
+                  <div class="progress-bar" role="progressbar" style="width: 10%" aria-valuenow="10%"
+                    aria-valuemin="0" aria-valuemax="100"></div>
+                </div>
+              </td>
+            </tr>
+
+            <tr>
+              <td>Earphone & Headphone</td>
+              <td>23</td>
+              <td>$450</td>
+              <td>02%</td>
+              <td>
+                <div class="progress progress-md rounded-0">
+                  <div class="progress-bar" role="progressbar" style="width: 8%" aria-valuenow="8%"
+                    aria-valuemin="0" aria-valuemax="100"></div>
+                </div>
+              </td>
+            </tr>
+
+            <tr>
+              <td>Gucci Watch</td>
+              <td>32</td>
+              <td>$554</td>
+              <td>8%</td>
+              <td>
+                <div class="progress progress-md rounded-0">
+                  <div class="progress-bar" role="progressbar" style="width: 8%" aria-valuenow="8%"
+                    aria-valuemin="0" aria-valuemax="100"></div>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+</div>
+<div class="col-xl-4">
+
+  <!-- Chat -->
+  <div class="card card-default chat">
+    <div class="card-header">
+      <h2>QnA</h2>
+      <div class="dropdown dropdown-chat-state">
+        <ul class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton">
+          <li>
+            <a href="#" class="user-link">
+              <img src="images/user/user-sm-01.jpg" alt="User Image">
+              <span class="username">anna patuary
+                <span class="badge badge-secondary">18</span>
+              </span>
+              <span class="state active">
+                <i class="mdi mdi-circle-medium"></i>
+              </span>
+            </a>
+          </li>
+          <li>
+            <a href="#" class="user-link">
+              <img src="images/user/user-sm-02.jpg" alt="User Image">
+              <span class="username">riman Ghose
+                <span class="badge badge-secondary">18</span>
+              </span>
+              <span class="state">
+                1hrs
+              </span>
+            </a>
+          </li>
+          <li>
+            <a href="#" class="user-link">
+              <img src="images/user/user-sm-03.jpg" alt="User Image">
+              <span class="username">riman Ghose
+                <span class="badge badge-secondary">18</span>
+              </span>
+              <span class="state">
+                1hrs
+              </span>
+            </a>
+          </li>
+          <li>
+            <a href="#" class="user-link">
+              <img src="images/user/user-sm-04.jpg" alt="User Image">
+              <span class="username">riman Ghose
+                <span class="badge badge-secondary">18</span>
+              </span>
+              <span class="state">
+                1hrs
+              </span>
+            </a>
+          </li>
+          <li>
+            <a href="#" class="user-link">
+              <img src="images/user/user-sm-05.jpg" alt="User Image">
+              <span class="username">riman Ghose</span>
+              <span class="state">15min</span>
+            </a>
+          </li>
+        </ul>
+      </div>
+    </div>
+    <div class="card-body pb-0" data-simplebar style="height: 363px;">
+      <!-- Media Chat Left -->
+      <div class="media media-chat">
+        <img src="images/user/user-sm-01.jpg" class="rounded-circle" alt="Avata Image">
+        <div class="media-body">
+          <div class="text-content">
+            <span class="message">Hello my name is anna.</span>
+            <time class="time">5 mins ago</time>
+          </div>
+        </div>
+      </div>
+
+      <!-- Media Chat Right -->
+      <div class="media media-chat media-chat-right">
+        <div class="media-body">
+          <div class="text-content">
+            <span class="message">Hello i am Riman.</span>
+            <time class="time">4 mins ago</time>
+          </div>
+          <div class="text-content">
+            <span class="message">I want to know about yourself</span>
+            <time class="time">3 mins ago</time>
+          </div>
+        </div>
+        <img src="images/user/user-sm-02.jpg" class="rounded-circle" alt="Avata Image">
+      </div>
+
+      <!-- Media Chat Left -->
+      <div class="media media-chat">
+        <img src="images/user/user-sm-01.jpg" class="rounded-circle" alt="Avata Image">
+        <div class="media-body">
+          <div class="text-content">
+            <span class="message">Its had resolving otherwise she contented therefore.</span>
+            <time class="time">1 mins ago</time>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="chat-footer">
+      <form>
+        <div class="input-group input-group-chat">
+          <textarea class="form-control" rows="4" id="question"></textarea>
+          </div>
+        <div class="text-center mt-4 mb-5">
+          <button class="btn btn-primary btn-sl-sm mr-3" type="button"><span
+                  class="mr-2"><i class="fa fa-paper-plane"></i></span> Send</button>
+          <button class="btn btn-dark btn-sl-sm" type="button"><span class="mr-2"><i
+                      class="fa fa-times" aria-hidden="true"></i></span> Discard</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+</div>

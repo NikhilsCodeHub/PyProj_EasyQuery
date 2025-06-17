@@ -2,11 +2,27 @@ from typing import Union
 from pydantic import BaseModel
 from fastapi import FastAPI
 from fastapi.responses import FileResponse
+from fastapi.staticfiles import StaticFiles
+from fastapi.middleware.cors import CORSMiddleware
+
 import ast
 
 
 app = FastAPI()
 
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # Replace with specific origins in production
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+
+app.mount("/tests", StaticFiles(directory="../tests"), name="tests")
+
+## http://127.0.0.1:8123/tests/row_ai.html
 
 class QnARequest(BaseModel):
     question: str
@@ -81,6 +97,8 @@ def read_root():
 @app.get("/api/v1/health")
 def health_check():
     return {"status": "ok"}
+
+
 
 @app.get("/app")
 def gethtml():
