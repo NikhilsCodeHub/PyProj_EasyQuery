@@ -7,4 +7,8 @@
 /test.xml
 Simple_db_QnA/Sql_to_sqlite/example_output.db
 example_output.db
-
+.env
+*.pyc
+__pycache__/
+Simple_db_QnA/__pycache__
+Simple_db_QnA/Sql_to_sqlite/__pycache__

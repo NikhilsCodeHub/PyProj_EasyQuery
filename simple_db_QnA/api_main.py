@@ -4,6 +4,7 @@ from fastapi import FastAPI
 from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.middleware.cors import CORSMiddleware
+from simple_db_QnA.api_qna import graph
 
 import ast
 
@@ -20,7 +21,7 @@ app.add_middleware(
 )
 
 
-app.mount("/tests", StaticFiles(directory="../tests"), name="tests")
+app.mount("/tests", StaticFiles(directory="simple_db_QnA/tests"), name="tests")
 
 ## http://127.0.0.1:8123/tests/row_ai.html
 
@@ -39,7 +40,7 @@ async def qna_response(qna_request: QnARequest):
     Endpoint to get the QnA response.
     This will trigger the QnA process and return the result.
     """
-    from api_qna import graph
+
 
     input_question = qna_request.question
 
@@ -64,7 +65,7 @@ async def qna_response2(qna_request: QnARequest):
     Endpoint to get the QnA response.
     This will trigger the QnA process and return the result.
     """
-    from api_qna import graph
+    ## from api_qna import graph
 
     input_question = qna_request.question
 
@@ -105,5 +106,4 @@ def health_check():
 
 @app.get("/app")
 def gethtml():
-    return FileResponse("../app.html")
-
+    return FileResponse("simple_db_QnA/app.html")

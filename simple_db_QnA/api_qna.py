@@ -1,6 +1,8 @@
 
-from db_connection import db
-from llm_config import llm
+from simple_db_QnA.db_connection import db
+from simple_db_QnA.llm_config import llm
+# from db_connection import db
+# from llm_config import llm
 from typing_extensions import TypedDict
 import ast
 
@@ -29,6 +31,7 @@ few relevant columns given the question.
 Pay attention to use only the column names that you can see in the schema
 description. Be careful to not query for columns that do not exist. Also,
 pay attention to which column is in which table.
+When performing text comparison, use small case and no accents.
 
 DO NOT make any statements that contain (INSERT, UPDATE, DELETE, DROP etc.) to the database.
 Output only 1 query even for multiple questions. 

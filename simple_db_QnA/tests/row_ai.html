@@ -1,79 +1,4 @@
-    <script>
-        $(document).ready(function() {
-            // Reference to the DataTable instance
-            let dataTableInstance = null;
 
-            // Function to fetch data from the API and populate the table
-            $('#submitQuestion').on('click', function() {
-                const question = $('#questionInput').val();
-                if (!question) {
-                    $('#errorMessage').text('Please enter a question.').show();
-                    $('#tableContainer').hide();
-                    return;
-                }
-
-                $('#loadingMessage').show();
-                $('#errorMessage').hide();
-                $('#tableContainer').hide(); // Hide table while loading
-
-                // Replace 'YOUR_API_ENDPOINT' with the actual URL of your FastAPI endpoint
-                const apiEndpoint = 'http://127.0.0.1:8123/api/v2/qna'; // e.g., 'http://127.0.0.1:8000/query' or whatever your FastAPI endpoint is
-
-                $.ajax({
-                    url: apiEndpoint,
-                    type: 'POST',
-                    contentType: 'application/json',
-                    data: JSON.stringify({ question: question }), // Send the question as JSON
-                    success: function(response) {
-                        $('#loadingMessage').hide();
-
-                        if (response && response.result) {
-                            const parsedData = response.result;
-
-                            if (parsedData && parsedData.length > 0) {
-                                // Extract headers (first row)
-                                const headers = parsedData.shift();
-
-                                // Format headers for DataTables columns option
-                                const columns = headers.map(header => ({ title: header }));
-
-                                // Destroy existing DataTable instance if it exists
-                                if (dataTableInstance) {
-                                    dataTableInstance.destroy();
-                                    $('#myDataTable thead').empty(); // Clear old headers
-                                    $('#myDataTable tbody').empty(); // Clear old body
-                                }
-
-                                // Initialize DataTables with new data
-                                dataTableInstance = $('#myDataTable').DataTable({
-                                    data: parsedData,
-                                    columns: columns,
-                                    paging: true,
-                                    searching: true,
-                                    ordering: true,
-                                    info: true,
-                                    destroy: true // Allow re-initialization if needed later
-                                });
-                                $('#tableContainer').show(); // Show table after data is loaded
-                            } else {
-                                $('#errorMessage').text('No data returned from the API or result was empty.').show();
-                                $('#tableContainer').hide();
-                            }
-                        } else {
-                            $('#errorMessage').text('Invalid API response format (missing "result" key).').show();
-                            $('#tableContainer').hide();
-                        }
-                    },
-                    error: function(jqXHR, textStatus, errorThrown) {
-                        $('#loadingMessage').hide();
-                        $('#errorMessage').text('API Error: ' + textStatus + ' - ' + errorThrown).show();
-                        console.error("AJAX error:", textStatus, errorThrown, jqXHR.responseText);
-                        $('#tableContainer').hide();
-                    }
-                });
-            });
-        });
-    </script>
 <style>
 /* ===== BUTTONS ===== */
 .btn {
@@ -151,7 +76,7 @@
   <!-- Sales by Product -->
   <div class="card card-default">
     <div class="card-header align-items-center">
-      <h2 class="">Ai Agent Response</h2>
+      <h2 class="">Ai Response</h2>
     </div>
     <div class="card-body">
       <div class="tab-content" id="tableContainer" style="display: none;">
@@ -232,3 +157,80 @@
   </div>
 
 </div>
+    <script>
+        // $(document).ready(function() {
+            // Reference to the DataTable instance
+            let dataTableInstance = null;
+
+            // Function to fetch data from the API and populate the table
+            $('#submitQuestion').on('click', function() {
+                const question = $('#questionInput').val();
+                if (!question) {
+                    $('#errorMessage').text('Please enter a question.').show();
+                    $('#tableContainer').hide();
+                    return;
+                }
+
+                $('#loadingMessage').show();
+                $('#errorMessage').hide();
+                $('#tableContainer').hide(); // Hide table while loading
+
+                // Replace 'YOUR_API_ENDPOINT' with the actual URL of your FastAPI endpoint
+                const apiEndpoint = 'https://192.168.86.39/api/v2/qna'; // e.g., 'http://127.0.0.1:8000/query' or whatever your FastAPI endpoint is
+
+                $.ajax({
+                    url: apiEndpoint,
+                    type: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify({ question: question }), // Send the question as JSON
+                    success: function(response) {
+                        $('#loadingMessage').hide();
+
+                        if (response && response.result) {
+                            const parsedData = response.result;
+
+                            if (parsedData && parsedData.length > 0) {
+                                // Extract headers (first row)
+                                //const headers = parsedData.shift();
+                                const headers = response.columns;
+
+                                // Format headers for DataTables columns option
+                                const columns = headers.map(header => ({ title: header }));
+
+                                // Destroy existing DataTable instance if it exists
+                                if (dataTableInstance) {
+                                    dataTableInstance.destroy();
+                                    $('#myDataTable thead').empty(); // Clear old headers
+                                    $('#myDataTable tbody').empty(); // Clear old body
+                                }
+
+                                // Initialize DataTables with new data
+                                dataTableInstance = $('#myDataTable').DataTable({
+                                    data: parsedData,
+                                    columns: columns,
+                                    paging: true,
+                                    searching: true,
+                                    ordering: true,
+                                    info: true,
+                                    destroy: true // Allow re-initialization if needed later
+                                });
+                                $('#tableContainer').show(); // Show table after data is loaded
+                            } else {
+                                $('#errorMessage').text('No data returned from the API or result was empty.').show();
+                                $('#tableContainer').hide();
+                            }
+                        } else {
+                            $('#errorMessage').text('Invalid API response format (missing "result" key).').show();
+                            $('#tableContainer').hide();
+                        }
+                    },
+                    error: function(jqXHR, textStatus, errorThrown) {
+                        $('#loadingMessage').hide();
+                        $('#errorMessage').text('API Error: ' + textStatus + ' - ' + errorThrown).show();
+                        console.error("AJAX error:", textStatus, errorThrown, jqXHR.responseText);
+                        $('#tableContainer').hide();
+                    }
+                });
+            });
+       // });
+    </script>
