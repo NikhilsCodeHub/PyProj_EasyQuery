@@ -24,7 +24,7 @@ $.ajax({
 -- Load Dynamically via Console 
 document.head.appendChild(Object.assign(document.createElement('script'), {src: 'http://127.0.0.1:8123/tests/sideload.js', onload: () => console.log('Loaded!')}));
 
-
+uvicorn simple_db_QnA.api_main:app --host 0.0.0.0 --port 443 --ssl-keyfile=simple_db_QnA/cert/key.pem --ssl-certfile=simple_db_QnA/cert/cert.pem
 
 # Step2 : Add onClick event on the Agent Image.
 

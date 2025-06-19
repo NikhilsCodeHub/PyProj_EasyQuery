@@ -1,3 +1,9 @@
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/2.3.2/css/dataTables.dataTables.css">
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdn.datatables.net/2.3.2/js/dataTables.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+    <script src="https://cdn.datatables.net/2.0.8/js/dataTables.bootstrap5.min.js"></script>
 
 <style>
 /* ===== BUTTONS ===== */
@@ -69,6 +75,13 @@
     .btn-dark:not(:disabled):not(.disabled):active:focus, .btn-dark:not(:disabled):not(.disabled).active:focus,
     .show > .btn-dark.dropdown-toggle:focus {
       box-shadow: 0 0 0 0.2rem rgba(97, 97, 97, 0.5); }
+
+        /* Custom CSS for dark gray table headers */
+        #myDataTable thead th {
+            background-color: #343a40; /* Darker gray background */
+            color: #ffffff; /* White text for contrast */
+            border-color: #454d55; /* Slightly darker border for separation */
+        }
   </style>
 
 <div class="col-xl-8">
@@ -80,7 +93,7 @@
     </div>
     <div class="card-body">
       <div class="tab-content" id="tableContainer" style="display: none;">
-        <table id="myDataTable" class="table table-product" style="width:100%">
+        <table id="myDataTable" class="table table-striped table-bordered table-hover row-border" style="width:100%;">
             <thead>
                 </thead>
             <tbody>
@@ -88,6 +101,7 @@
         </table>
       </div>
       <div id="loadingMessage" style="display: none; color: blue;">Loading data...</div>
+      <div id="OneLineMessage" style="display: none; color: rgb(2, 44, 10);">...</div>
       <div id="errorMessage" style="display: none; color: red;"></div>
     </div>
   </div>
@@ -158,6 +172,47 @@
 
 </div>
     <script>
+      let questionhistory = []; // Array to store question history'
+
+      const qnaObject = {
+        "id": "1234",
+        "timestamp": "234234",
+        "question": "Test Q",
+        "query": "Select top 10 * from Test Limit 10",
+        "result": [ // This is an array of arrays
+          ["1", "2", "STELARA", "3", "4"],
+          ["5", "6", "COSENTYX", "7", "8"],
+          ["9", "10", "TALTZ", "11", "12"]
+        ],
+        "answer": "This is answer"
+      };
+
+// You can then access its properties like this:
+console.log(qnaObject.id);         // Output: "1234"
+console.log(qnaObject.question);   // Output: "Test Q"
+console.log(qnaObject.result[0][2]); // Output: "STELARA" (accessing the third element of the first inner array)
+
+function addToQnAHistory(question, query, columns, results, answer) {
+    // Create a new entry for the question history
+    const newEntry = {
+        id: questionhistory.length + 1, // Incremental ID
+        timestamp: new Date().toISOString(), // Current timestamp
+        question: question,
+        query: query,
+        columns: columns, // Assuming columns is an array of column names
+        result: results,
+        answer: answer
+    };
+
+    // Add the new entry to the history array
+    questionhistory.push(newEntry);
+
+    // Log the updated history for debugging
+    console.log("Updated QnA History:", questionhistory);
+    console.log("Objects in QnA History:", questionhistory.length);
+
+}
+
         // $(document).ready(function() {
             // Reference to the DataTable instance
             let dataTableInstance = null;
@@ -172,6 +227,7 @@
                 }
 
                 $('#loadingMessage').show();
+                $('#OneLineMessage').hide();
                 $('#errorMessage').hide();
                 $('#tableContainer').hide(); // Hide table while loading
 
@@ -185,11 +241,12 @@
                     data: JSON.stringify({ question: question }), // Send the question as JSON
                     success: function(response) {
                         $('#loadingMessage').hide();
-
+                        // console.log("API answer:", response.answer.content); // Log the entire response for debugging
+                        console.log("API response:", response); // Log the entire response for debugging
                         if (response && response.result) {
                             const parsedData = response.result;
 
-                            if (parsedData && parsedData.length > 0) {
+                            if (parsedData && parsedData.length > 1) {
                                 // Extract headers (first row)
                                 //const headers = parsedData.shift();
                                 const headers = response.columns;
@@ -197,6 +254,7 @@
                                 // Format headers for DataTables columns option
                                 const columns = headers.map(header => ({ title: header }));
 
+                                addToQnAHistory(question, response.query, response.columns,response.result,response.answer);
                                 // Destroy existing DataTable instance if it exists
                                 if (dataTableInstance) {
                                     dataTableInstance.destroy();
@@ -215,8 +273,16 @@
                                     destroy: true // Allow re-initialization if needed later
                                 });
                                 $('#tableContainer').show(); // Show table after data is loaded
+                            } else if (parsedData.length === 1) {
+                                // Handle case where only one row is returned (e.g., no data)
+                                const answer = response.answer.content || 'No data returned from the API.';
+                                $('#loadingMessage').hide();
+                                $('#myDataTable').DataTable().clear().draw(); // Clear the table
+                                $('#OneLineMessage').text(answer).show();
+                                $('#errorMessage').hide();
+                                $('#tableContainer').hide();
                             } else {
-                                $('#errorMessage').text('No data returned from the API or result was empty.').show();
+                                $('#errorMessage').text('No data returned from the API.').show();
                                 $('#tableContainer').hide();
                             }
                         } else {

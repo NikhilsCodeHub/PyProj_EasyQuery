@@ -18,4 +18,44 @@ Create a pivot dataset showing claim counts by CHANNEL as headers. Split where t
 SELECT strftime('%Y-%m', FILL_DT) AS month, CHANNEL, COUNT(*) AS claim_count FROM RX_CLAIM WHERE CATEGORY_NAME = 'HORMONE THERAPY' AND strftime('%Y', FILL_DT) = '2023' GROUP BY month, CHANNEL ORDER BY month, CHANNEL LIMIT 100;
 
 Calculate claim counts by Channel for each quarter in 2023. Show Quarters as column headers.
-SELECT CHANNEL, \n       COUNT(CASE WHEN strftime('%Y-%m', FILL_DT) BETWEEN '2023-01' AND '2023-03' THEN 1 END) AS Q1, \n       COUNT(CASE WHEN strftime('%Y-%m', FILL_DT) BETWEEN '2023-04' AND '2023-06' THEN 1 END) AS Q2, \n       COUNT(CASE WHEN strftime('%Y-%m', FILL_DT) BETWEEN '2023-07' AND '2023-09' THEN 1 END) AS Q3, \n       COUNT(CASE WHEN strftime('%Y-%m', FILL_DT) BETWEEN '2023-10' AND '2023-12' THEN 1 END) AS Q4 \nFROM RX_CLAIM \nWHERE FILL_DT LIKE '2023%' \nGROUP BY CHANNEL \nLIMIT 100;
+SELECT CHANNEL, COUNT(CASE WHEN strftime('%Y-%m', FILL_DT) BETWEEN '2023-01' AND '2023-03' THEN 1 END) AS Q1,        COUNT(CASE WHEN strftime('%Y-%m', FILL_DT) BETWEEN '2023-04' AND '2023-06' THEN 1 END) AS Q2,        COUNT(CASE WHEN strftime('%Y-%m', FILL_DT) BETWEEN '2023-07' AND '2023-09' THEN 1 END) AS Q3,        COUNT(CASE WHEN strftime('%Y-%m', FILL_DT) BETWEEN '2023-10' AND '2023-12' THEN 1 END) AS Q4 FROM RX_CLAIM WHERE FILL_DT LIKE '2023%' GROUP BY CHANNEL LIMIT 100;
+
+SELECT CHANNEL, COUNT(RX_CLAIM_NBR) AS claim_count FROM RX_CLAIM WHERE CATEGORY_NAME IN ('allergies', 'depression', 'glaucoma') GROUP BY CHANNEL LIMIT 100;
+
+
+Create a pivot dataset showing claim counts by CHANNEL as headers. Split where the category names are in ALLERGIES, DEPRESSION and  GLAUCOMA
+
+SELECT CHANNEL, CATEGORY_NAME, COUNT(*) AS CLAIM_COUNT \nFROM RX_CLAIM \nWHERE LOWER(CATEGORY_NAME) IN ('allergies', 'depression', 'glaucoma') \nGROUP BY CHANNEL, CATEGORY_NAME \nORDER BY CHANNEL, CATEGORY_NAME \nLIMIT 100;
+
+
+SELECT AVG(AWP) AS average_weighted_price FROM RX_CLAIM WHERE GN_NAME = 'prednisone' AND strftime('%Y', PAID_DT) = '2023' LIMIT 100;
+
+
+[
+    "12639903",
+    "DEMO-102049",
+    "STELARA",
+    "2023-03-09",
+    25138.12
+],
+[
+    "23974179",
+    "DEMO-10002",
+    "TRIKAFTA",
+    "2023-03-02",
+    20113.07
+],
+[
+    "12639903",
+    "DEMO-102049",
+    "STELARA",
+    "2023-03-09",
+    25138.12
+],
+[
+    "23974179",
+    "DEMO-10002",
+    "TRIKAFTA",
+    "2023-03-02",
+    20113.07
+]

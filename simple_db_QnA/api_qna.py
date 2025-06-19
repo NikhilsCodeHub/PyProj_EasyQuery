@@ -31,7 +31,6 @@ few relevant columns given the question.
 Pay attention to use only the column names that you can see in the schema
 description. Be careful to not query for columns that do not exist. Also,
 pay attention to which column is in which table.
-When performing text comparison, use small case and no accents.
 
 DO NOT make any statements that contain (INSERT, UPDATE, DELETE, DROP etc.) to the database.
 Output only 1 query even for multiple questions. 
@@ -72,7 +71,7 @@ def write_query(state: State):
             "input": state["question"],
         }
     )
-    print("Prompt:", prompt)    
+    # print("Prompt:", prompt)    
     # print("Prompt:", prompt.messages[1].content)
 
     structured_llm = llm.with_structured_output(QueryOutput)
@@ -105,7 +104,9 @@ from langchain_community.tools.sql_database.tool import QuerySQLDatabaseTool
 def execute_query(state: State):
     """Execute SQL query."""
     execute_query_tool = QuerySQLDatabaseTool(db=db)
-    return {"result": execute_query_tool.invoke(state["query"])}
+    var_result = execute_query_tool.invoke(state["query"])
+    print("Result:", var_result)
+    return {"result": [] if not var_result else var_result}
 
 ## ------ Step 5: Generate Answer based on Query and Result
 
@@ -119,10 +120,12 @@ def generate_answer(state: State):
         f'SQL Result: {state["result"]}'
     )
 
-    if len(ast.literal_eval(state["result"])[0]) > 3 or len(ast.literal_eval(state["result"])) > 5:
+    if len(state["result"])>2 and (len(ast.literal_eval(state["result"])[0]) > 3 or len(ast.literal_eval(state["result"])) > 3):
         response = "Result has too many value to send to LLM. Use datatable to show data. tuples {},length {}".format(
             len(state["result"][0]), len(state["result"])
         )
+    elif len(state["result"]) < 2:
+        response = "No results found for the query."
     else:
         # Use the LLM to generate an answer based on the prompt
         response = llm.invoke(prompt)

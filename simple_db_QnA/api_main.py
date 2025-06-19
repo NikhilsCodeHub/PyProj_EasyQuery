@@ -22,6 +22,7 @@ app.add_middleware(
 
 
 app.mount("/tests", StaticFiles(directory="simple_db_QnA/tests"), name="tests")
+app.mount("/images", StaticFiles(directory="simple_db_QnA/images"), name="images")
 
 ## http://127.0.0.1:8123/tests/row_ai.html
 
@@ -43,20 +44,23 @@ async def qna_response(qna_request: QnARequest):
 
 
     input_question = qna_request.question
-
+    print("Question:", input_question)
     for step in graph.stream(
 #    {"question": "Whats the Total Invoice for each month for each Artist ?. Show the Artist in columns and Month in Rows. Limit result to 100 rows"}, stream_mode="updates"
     {"question": input_question}, stream_mode="updates"):
-        print("Step:", step)
+
         if "write_query" in step:
             str_query = step["write_query"]["query"]
         if "extract_columns" in step:
             str_columns = step["extract_columns"]["columns"]
         if "execute_query" in step:
             str_result = step["execute_query"]["result"]
+            # if str_result == "[]":
+            #     str_result = "No results found for the query."
         if "generate_answer" in step:
             str_answer = step["generate_answer"]["answer"]
-    return {"query": str_query, "columns" : str_columns, "result": parse_result_string(str_result), "answer": str_answer}
+        print("Step:", step)
+    return {"query": str_query, "columns" : str_columns, "result": [] if not str_result else parse_result_string(str_result), "answer": str_answer}
 
 
 @app.post("/api/v1/qna")
@@ -86,7 +90,7 @@ def parse_result_string(result_string: str) -> list[list]:
         list_of_tuples = ast.literal_eval(result_string)
         return [list(t) for t in list_of_tuples]
     except (ValueError, SyntaxError) as e:
-        print(f"Error parsing result string: {e}")
+        print(f"(fn:parse_result_string) Error parsing result string: {e}")
         return [] # Or raise an exception, depending on your error handling strategy
 
 
@@ -102,7 +106,9 @@ def read_root():
 def health_check():
     return {"status": "ok"}
 
-
+@app.get("/main")
+def gethtml():
+    return FileResponse("simple_db_QnA/index.html")
 
 @app.get("/app")
 def gethtml():
