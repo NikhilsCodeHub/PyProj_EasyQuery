@@ -87,7 +87,7 @@
 <div class="col-xl-8">
 
   <!-- Sales by Product -->
-  <div class="card card-default">
+  <div class="card card-default" style="width:100%;">
     <div class="card-header align-items-center">
       <h2 class="">Ai Response</h2>
     </div>
@@ -111,48 +111,14 @@
 
   <!-- Chat -->
   <div class="card card-default chat">
-    <div class="card-header">
-      <h2>QnA</h2>
-      <div class="dropdown dropdown-chat-state">
-
+    <div id="historySection" >
+      <div class="card-header">
+        <h2>QnA History</h2>
       </div>
-    </div>
-    <div class="card-body pb-0" data-simplebar style="height: 363px;">
-      <!-- Media Chat Left -->
-      <div class="media media-chat">
-        <img src="images/user/user-sm-01.jpg" class="rounded-circle" alt="Avata Image">
-        <div class="media-body">
-          <div class="text-content">
-            <span class="message">Hello my name is anna.</span>
-            <time class="time">5 mins ago</time>
-          </div>
-        </div>
-      </div>
-
-      <!-- Media Chat Right -->
-      <div class="media media-chat media-chat-right">
-        <div class="media-body">
-          <div class="text-content">
-            <span class="message">Hello i am Riman.</span>
-            <time class="time">4 mins ago</time>
-          </div>
-          <div class="text-content">
-            <span class="message">I want to know about yourself</span>
-            <time class="time">3 mins ago</time>
-          </div>
-        </div>
-        <img src="images/user/user-sm-02.jpg" class="rounded-circle" alt="Avata Image">
-      </div>
-
-      <!-- Media Chat Left -->
-      <div class="media media-chat">
-        <img src="images/user/user-sm-01.jpg" class="rounded-circle" alt="Avata Image">
-        <div class="media-body">
-          <div class="text-content">
-            <span class="message">Its had resolving otherwise she contented therefore.</span>
-            <time class="time">1 mins ago</time>
-          </div>
-        </div>
+      <div class="card-body">
+        <ul id="historyList" class="list-group">
+          <!-- History items will be dynamically added here -->
+        </ul>
       </div>
     </div>
     <div class="chat-footer">
@@ -163,8 +129,8 @@
         <div class="text-center mt-4 mb-5">
           <button id="submitQuestion" class="btn btn-primary btn-sl-sm mr-3" type="button"><span
                   class="mr-2"><i class="fa fa-paper-plane"></i></span> Send</button>
-          <button class="btn btn-dark btn-sl-sm" type="button"><span class="mr-2"><i
-                      class="fa fa-times" aria-hidden="true"></i></span> Discard</button>
+          <button id="clearall" class="btn btn-dark btn-sl-sm" type="button" ><span class="mr-2"><i
+                      class="fa fa-times" aria-hidden="true"></i></span> Clear</button>
         </div>
       </form>
     </div>
@@ -192,16 +158,34 @@ console.log(qnaObject.id);         // Output: "1234"
 console.log(qnaObject.question);   // Output: "Test Q"
 console.log(qnaObject.result[0][2]); // Output: "STELARA" (accessing the third element of the first inner array)
 
-function addToQnAHistory(question, query, columns, results, answer) {
+// -- clear the page when Clear button is clicked
+      $('#clearall').on('click', function() {
+        clear();
+      });
+  function clear() {
+    // Clear the question input field
+    $('#questionInput').val('');
+    // Clear the DataTable
+    if (dataTableInstance) {
+      dataTableInstance.clear().draw();
+    }
+    // Hide messages and table
+    $('#loadingMessage').hide();
+    $('#OneLineMessage').hide();
+    $('#errorMessage').hide();
+    $('#tableContainer').hide();
+  }
+
+  function addToQnAHistory(question, query, columns, results, answer) {
     // Create a new entry for the question history
     const newEntry = {
-        id: questionhistory.length + 1, // Incremental ID
-        timestamp: new Date().toISOString(), // Current timestamp
-        question: question,
-        query: query,
-        columns: columns, // Assuming columns is an array of column names
-        result: results,
-        answer: answer
+      id: questionhistory.length + 1, // Incremental ID
+      timestamp: new Date().toISOString(), // Current timestamp
+      question: question,
+      query: query,
+      columns: columns, // Assuming columns is an array of column names
+      result: results,
+      answer: answer
     };
 
     // Add the new entry to the history array
@@ -210,8 +194,61 @@ function addToQnAHistory(question, query, columns, results, answer) {
     // Log the updated history for debugging
     console.log("Updated QnA History:", questionhistory);
     console.log("Objects in QnA History:", questionhistory.length);
+    // Optionally, you can update the UI or perform other actions here
+    // For example, you could update a dropdown or a list to show the history
+    const historyList = $('#historyList');
+    historyList.empty(); // Clear existing items
+    questionhistory.forEach((entry, index) => {
+      historyList.append(`<li class="list-group-item" onclick="showQnAHistory(${index})">Q${entry.id}: ${entry.question} (Rows ${entry.result.length})</li>`);
+    });
+  }
 
-}
+  function showQnAHistory(intHistoryId) {
+
+    if (intHistoryId < 0 || intHistoryId >= questionhistory.length) {
+      console.error("Invalid history ID:", intHistoryId);
+      $('#errorMessage').text('Invalid history ID.').show();
+      $('#tableContainer').hide();
+      $('#loadingMessage').hide();
+      return -1; // Return -1 for invalid ID
+    }
+    // Destroy existing DataTable instance if it exists
+    if (dataTableInstance) {
+      dataTableInstance.destroy();
+    }
+      $('#myDataTable thead').empty(); // Clear old headers
+      $('#myDataTable tbody').empty(); // Clear old body
+      $('#errorMessage').hide();
+      $('#OneLineMessage').hide();
+      $('#loadingMessage').show();
+      $('#tableContainer').hide(); // Hide table while loading
+    
+    headers = questionhistory[intHistoryId].columns; // Assuming columns is an array of column names
+    columns = headers.map(header => ({ title: header }));
+    // Initialize DataTables with new data
+    dataTableInstance = $('#myDataTable').DataTable({
+      data: questionhistory[intHistoryId].result,
+      columns: columns,
+      paging: true,
+      searching: true,
+      ordering: true,
+      info: true,
+      destroy: true // Allow re-initialization if needed later
+    });
+    $('#loadingMessage').hide();
+    $('#tableContainer').show(); // Show table after data is loaded
+    
+    if (questionhistory[intHistoryId].result.length === 1) {
+      // Handle case where only one row is returned (e.g., no data)
+      const answer = questionhistory[intHistoryId].answer;
+      $('#loadingMessage').hide();
+      $('#myDataTable').DataTable().clear().draw(); // Clear the table
+      $('#OneLineMessage').text(answer).show();
+      $('#errorMessage').hide();
+      $('#tableContainer').hide();
+    } 
+    return 1;
+  }
 
         // $(document).ready(function() {
             // Reference to the DataTable instance
@@ -254,12 +291,13 @@ function addToQnAHistory(question, query, columns, results, answer) {
                                 // Format headers for DataTables columns option
                                 const columns = headers.map(header => ({ title: header }));
 
-                                addToQnAHistory(question, response.query, response.columns,response.result,response.answer);
+                                
                                 // Destroy existing DataTable instance if it exists
                                 if (dataTableInstance) {
                                     dataTableInstance.destroy();
                                     $('#myDataTable thead').empty(); // Clear old headers
                                     $('#myDataTable tbody').empty(); // Clear old body
+                                  
                                 }
 
                                 // Initialize DataTables with new data
@@ -285,6 +323,7 @@ function addToQnAHistory(question, query, columns, results, answer) {
                                 $('#errorMessage').text('No data returned from the API.').show();
                                 $('#tableContainer').hide();
                             }
+                            addToQnAHistory(question, response.query, response.columns,response.result,response.answer);
                         } else {
                             $('#errorMessage').text('Invalid API response format (missing "result" key).').show();
                             $('#tableContainer').hide();

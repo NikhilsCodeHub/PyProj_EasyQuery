@@ -30,32 +30,8 @@ SELECT CHANNEL, CATEGORY_NAME, COUNT(*) AS CLAIM_COUNT \nFROM RX_CLAIM \nWHERE L
 
 SELECT AVG(AWP) AS average_weighted_price FROM RX_CLAIM WHERE GN_NAME = 'prednisone' AND strftime('%Y', PAID_DT) = '2023' LIMIT 100;
 
+/*
+uvicorn simple_db_QnA.api_main:app --host 0.0.0.0 --port 443 --ssl-keyfile=simple_db_QnA/cert/key.pem --ssl-certfile=simple_db_QnA/cert/cert.pem
 
-[
-    "12639903",
-    "DEMO-102049",
-    "STELARA",
-    "2023-03-09",
-    25138.12
-],
-[
-    "23974179",
-    "DEMO-10002",
-    "TRIKAFTA",
-    "2023-03-02",
-    20113.07
-],
-[
-    "12639903",
-    "DEMO-102049",
-    "STELARA",
-    "2023-03-09",
-    25138.12
-],
-[
-    "23974179",
-    "DEMO-10002",
-    "TRIKAFTA",
-    "2023-03-02",
-    20113.07
-]
+*/
+
