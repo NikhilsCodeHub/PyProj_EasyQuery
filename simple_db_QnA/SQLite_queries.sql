@@ -36,7 +36,7 @@ SELECT claim_nbr, client_id, net_mony, copay_mony, provider_view.provider_id, pr
 FROM claim_view inner join provider_view on claim_view.provider_id = provider_view.provider_id
 WHERE provider_view.provider_location like '%TX%'
 
-
+select DISTINCT CHANNEL from RX_CLAIM
 
 
 
@@ -76,10 +76,10 @@ select * from claim_view where benefit_type_Pharmacy_or_Medical = 'p' limit 10;
 
 
 -- Create a view to simplify the claim data for easier querying
-drop view if exists pharmacy_claims_Provider_view;
+drop view if exists pharmacy_claims_drug_provider_view;
 
-CREATE VIEW pharmacy_claims_Provider_view AS
-SELECT c.client_id, c.member_id, c.groupvar1, c.groupvar2, c.groupvar3, c.groupvar4, c.groupvar5, c.prim_dt as fill_dt, c.claim_nbr, c.benefit_type COLLATE NOCASE as benefit_type_Pharmacy_or_Medical, c.channel_id, c.specialty_ind COLLATE NOCASE as specialty_indicator, c.brand_generic COLLATE NOCASE as brand_or_generic, c.drug_name_id, c.drug_cat_id, c.net_mony, c.copay_mony, c.admin_mony, c.third_party_mony, c.prescriber_id, c.nabp_id, c.quantity, c.days_supply, c.asp, c.asp_use, c.awp, c.dxt_class COLLATE NOCASE, disp_fee as dispense_fee, c.ingred_cost as ingredient_cost, c.sales_tax, c.claim_id, 
+CREATE VIEW pharmacy_claims_drug_provider_view AS
+SELECT c.client_id, c.member_id, c.groupvar1, c.groupvar2, c.groupvar3, c.groupvar4, c.groupvar5, c.prim_dt as fill_dt, c.claim_nbr, c.benefit_type COLLATE NOCASE as benefit_type_Pharmacy_or_Medical, c.channel_id, c.specialty_ind COLLATE NOCASE as specialty_indicator, c.brand_generic COLLATE NOCASE as brand_or_generic, dn.drug_name COLLATE NOCASE as drug_name, c.net_mony, c.copay_mony, c.admin_mony, c.third_party_mony, c.quantity, c.days_supply, c.asp, c.asp_use, c.awp, c.dxt_class COLLATE NOCASE, disp_fee as dispense_fee, c.ingred_cost as ingredient_cost, c.sales_tax, c.claim_id, 
        p.provider_name COLLATE NOCASE as provider_name, 
        p.provider_location_city COLLATE NOCASE as provider_location_city, 
        p.provider_location_state COLLATE NOCASE as provider_location_state, 
@@ -92,8 +92,7 @@ SELECT c.client_id, c.member_id, c.groupvar1, c.groupvar2, c.groupvar3, c.groupv
        d.obsolete_date,
        d.code_description COLLATE NOCASE as code_description,
        dc.drug_cat_name COLLATE NOCASE as drug_category_name, 
-       dc.drug_cat_code COLLATE NOCASE as drug_category_code,
-       dn.drug_name COLLATE NOCASE as drug_name
+       dc.drug_cat_code COLLATE NOCASE as drug_category_code
 from claim c
 inner join provider_view p on c.provider_id = p.provider_id
 INNER JOIN drug_view d ON c.drug_name_id = d.drug_name_id

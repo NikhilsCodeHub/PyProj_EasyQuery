@@ -49,7 +49,7 @@ SELECT
     drug_category_name,
     SUM(net_mony) AS total_net_money
 FROM
-    pharmacy_claims_Provider_view
+    pharmacy_claims_drug_provider_view
 WHERE
     drug_category_name like '%Nausea%'
 GROUP BY
@@ -68,7 +68,7 @@ SELECT
     SUM(quantity) AS total_quantity_dispensed,
     COUNT(DISTINCT claim_id) AS total_claims
 FROM
-    pharmacy_claims_Provider_view
+    pharmacy_claims_drug_provider_view
 WHERE
     drug_name like  '%SYNTHROID%' -- Replace with any specific drug name
 GROUP BY
@@ -86,7 +86,7 @@ SELECT
     AVG(admin_mony) AS average_admin_fee,
     COUNT(claim_id) AS number_of_claims
 FROM
-    pharmacy_claims_Provider_view
+    pharmacy_claims_drug_provider_view
 GROUP BY
     benefit_type_Pharmacy_or_Medical;
 ---
@@ -99,7 +99,7 @@ SELECT
     COUNT(DISTINCT member_id) AS unique_members,
     COUNT(DISTINCT claim_id) AS unique_claims
 FROM
-    pharmacy_claims_Provider_view
+    pharmacy_claims_drug_provider_view
 WHERE
     provider_location_state in ('TX','NY', 'KY') AND provider_location_city IS NOT NULL
 GROUP BY
@@ -119,7 +119,7 @@ SELECT
     SUM(quantity) AS total_quantity,
     CAST(COUNT(claim_id) * 100.0 / SUM(COUNT(claim_id)) OVER (PARTITION BY specialty_indicator) AS REAL) AS percentage_of_claims_in_group
 FROM
-    pharmacy_claims_Provider_view
+    pharmacy_claims_drug_provider_view
 GROUP BY
     specialty_indicator,
     brand_or_generic
@@ -132,7 +132,7 @@ Question 6: What is the total number of claims group by days supply partition by
 SELECT    days_supply,    COUNT(claim_id) AS total_claims,    SUM(CASE WHEN provider_location_state = 'TX' THEN 1 ELSE 0 END) AS TX,
     SUM(CASE WHEN provider_location_state = 'NY' THEN 1 ELSE 0 END) AS NY,    SUM(CASE WHEN provider_location_state = 'PA' THEN 1 ELSE 0 END) AS PA,
         SUM(CASE WHEN provider_location_state = 'CA' THEN 1 ELSE 0 END) AS CA
-        FROM    pharmacy_claims_Provider_view 
+        FROM    pharmacy_claims_drug_provider_view 
         WHERE     provider_location_state IN ('TX', 'NY', 'PA', 'CA') 
         GROUP BY    days_supply
         ORDER BY    days_supply;
@@ -169,7 +169,7 @@ def write_query(state: State):
             "top_k": 100,
             #"table_info": db.get_table_info(['claim']),
             #"table_info": db.get_table_info(['claim_view', 'drug_view', 'drug_name_view', 'provider_view', 'drug_category_view']),
-            "table_info": db.get_table_info(['pharmacy_claims_Provider_view']),
+            "table_info": db.get_table_info(['pharmacy_claims_drug_provider_view']),
             "input": state["question"],
         }
     )
