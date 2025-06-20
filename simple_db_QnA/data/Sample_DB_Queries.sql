@@ -28,3 +28,11 @@ DELETE FROM Cost_Of_Care;
 
 
 --- 
+SELECT Disease, Utilizers 
+FROM Diseases 
+WHERE Disease IN 
+(SELECT Top_Disease FROM Members 
+WHERE Group_1 = 'Plan Type A') 
+ORDER BY Utilizers DESC LIMIT 10;
+
+SELECT * FROM Diseases; WHERE Disease = 'Psoriasis' LIMIT 10;

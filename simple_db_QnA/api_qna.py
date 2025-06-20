@@ -59,40 +59,65 @@ ORDER BY
     fill_year,
     total_net_money DESC;
 ---
-
-Question 2: Top 5 Prescribers by Quantity Dispensed for a Specific Drug Type
-
+Question 2: Total Net Money by Drug Category and Year
 --sql 2
 SELECT
-    prescriber_id,
-    SUM(quantity) AS total_quantity_dispensed,
-    COUNT(DISTINCT claim_id) AS total_claims
+    STRFTIME('%Y', fill_dt) AS fill_year,
+    drug_category_name,
+    SUM(net_mony) AS total_net_money
 FROM
     pharmacy_claims_drug_provider_view
 WHERE
-    drug_name like  '%SYNTHROID%' -- Replace with any specific drug name
+    drug_category_name IS NOT NULL
 GROUP BY
-    prescriber_id
+    fill_year,
+    drug_category_name
 ORDER BY
-    total_quantity_dispensed DESC
-LIMIT 5;
+    fill_year,
+    total_net_money DESC;
 ---
 
-Question 3: Average Copay and Admin Fee per Claim for Pharmacy vs. Medical Benefits
---sql 3
+Query 3: Total Claims and Net Money by Channel Type for a Specific Year 
+-- Show total number of claims and total net money for each channel type in 2021.
+Select channel_type, count(claim_id) as total_claims, sum(net_mony) as total_net_money
+FROM pharmacy_claims_drug_provider_view
+WHERE fill_dt BETWEEN '2021-01-01' AND '2021-12-31'
+GROUP BY channel_type
+ORDER BY channel_type;
+---
+
+Query 4: Top 10 Drugs by Total Net Money in 2022
 SELECT
-    benefit_type_Pharmacy_or_Medical,
-    AVG(copay_mony) AS average_copay,
-    AVG(admin_mony) AS average_admin_fee,
-    COUNT(claim_id) AS number_of_claims
+    drug_name,
+    SUM(net_mony) AS total_net_money
 FROM
     pharmacy_claims_drug_provider_view
+WHERE
+    STRFTIME('%Y', fill_dt) = '2021'
 GROUP BY
-    benefit_type_Pharmacy_or_Medical;
+    drug_name
+ORDER BY
+    total_net_money DESC
+LIMIT 10;
+----- 
+
+Query 5: Average Days Supply by Drug Category in 2021
+SELECT
+    drug_category_name,
+    AVG(days_supply) AS average_days_supply
+FROM
+    pharmacy_claims_drug_provider_view
+WHERE
+    STRFTIME('%Y', fill_dt) = '2021'
+GROUP BY
+    drug_category_name
+ORDER BY
+    average_days_supply DESC
+LIMIT 10;
 ---
 
-Question 4: Count of Unique Members and Claims by Provider State in New York, Texas and Kentucky
---sql 4
+Question 6: Count of Unique Members and Claims by Provider State in New York, Texas and Kentucky
+--sql 6
 SELECT
     provider_location_state,
     provider_location_city,
@@ -110,8 +135,8 @@ ORDER BY
     provider_location_city;
 ---
 
-Question 5: Provide Brand vs. Generic Drug Dispensing by Specialty Indicator (with Percentage)
---sql 5
+Question 7: Provide Brand vs. Generic Drug Dispensing by Specialty Indicator (with Percentage)
+--sql 7
 SELECT
     specialty_indicator,
     brand_or_generic,
@@ -127,8 +152,8 @@ ORDER BY
     specialty_indicator,
     brand_or_generic;
 
-Question 6: What is the total number of claims group by days supply partition by provider location in TX, NY, PA and CA. Provider location as column headers
---sql 6
+Question 8: What is the total number of claims group by days supply partition by provider location in TX, NY, PA and CA. Provider location as column headers
+--sql 8
 SELECT    days_supply,    COUNT(claim_id) AS total_claims,    SUM(CASE WHEN provider_location_state = 'TX' THEN 1 ELSE 0 END) AS TX,
     SUM(CASE WHEN provider_location_state = 'NY' THEN 1 ELSE 0 END) AS NY,    SUM(CASE WHEN provider_location_state = 'PA' THEN 1 ELSE 0 END) AS PA,
         SUM(CASE WHEN provider_location_state = 'CA' THEN 1 ELSE 0 END) AS CA

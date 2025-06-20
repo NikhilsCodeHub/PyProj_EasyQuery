@@ -36,8 +36,7 @@ SELECT claim_nbr, client_id, net_mony, copay_mony, provider_view.provider_id, pr
 FROM claim_view inner join provider_view on claim_view.provider_id = provider_view.provider_id
 WHERE provider_view.provider_location like '%TX%'
 
-select DISTINCT CHANNEL from RX_CLAIM
-
+select DISTINCT channel_id from pharmacy_claims_drug_provider_view
 
 
 /*
@@ -79,7 +78,7 @@ select * from claim_view where benefit_type_Pharmacy_or_Medical = 'p' limit 10;
 drop view if exists pharmacy_claims_drug_provider_view;
 
 CREATE VIEW pharmacy_claims_drug_provider_view AS
-SELECT c.client_id, c.member_id, c.groupvar1, c.groupvar2, c.groupvar3, c.groupvar4, c.groupvar5, c.prim_dt as fill_dt, c.claim_nbr, c.benefit_type COLLATE NOCASE as benefit_type_Pharmacy_or_Medical, c.channel_id, c.specialty_ind COLLATE NOCASE as specialty_indicator, c.brand_generic COLLATE NOCASE as brand_or_generic, dn.drug_name COLLATE NOCASE as drug_name, c.net_mony, c.copay_mony, c.admin_mony, c.third_party_mony, c.quantity, c.days_supply, c.asp, c.asp_use, c.awp, c.dxt_class COLLATE NOCASE, disp_fee as dispense_fee, c.ingred_cost as ingredient_cost, c.sales_tax, c.claim_id, 
+SELECT c.client_id, c.member_id, c.prim_dt as fill_dt, c.claim_nbr, c.benefit_type COLLATE NOCASE as benefit_type_Pharmacy_or_Medical, c.specialty_ind COLLATE NOCASE as specialty_indicator, c.brand_generic COLLATE NOCASE as brand_or_generic, dn.drug_name COLLATE NOCASE as drug_name, c.net_mony, c.copay_mony, c.admin_mony, c.third_party_mony, c.quantity, c.days_supply, c.asp, c.asp_use, c.awp, c.dxt_class COLLATE NOCASE, disp_fee as dispense_fee, c.ingred_cost as ingredient_cost, c.sales_tax, c.claim_id, 
        p.provider_name COLLATE NOCASE as provider_name, 
        p.provider_location_city COLLATE NOCASE as provider_location_city, 
        p.provider_location_state COLLATE NOCASE as provider_location_state, 
@@ -92,7 +91,16 @@ SELECT c.client_id, c.member_id, c.groupvar1, c.groupvar2, c.groupvar3, c.groupv
        d.obsolete_date,
        d.code_description COLLATE NOCASE as code_description,
        dc.drug_cat_name COLLATE NOCASE as drug_category_name, 
-       dc.drug_cat_code COLLATE NOCASE as drug_category_code
+       dc.drug_cat_code COLLATE NOCASE as drug_category_code,
+        CASE 
+           WHEN c.channel_id = '1' THEN 'Retail'
+           WHEN c.channel_id = '2' THEN 'Mail Order'
+           WHEN c.channel_id = '3' THEN 'Specialty'
+           WHEN c.channel_id = '5' THEN 'Retail90'
+           WHEN c.channel_id = '6' THEN 'Physician Office'
+           WHEN c.channel_id = '7' THEN 'Home Infusion'
+           ELSE 'Other'
+       END COLLATE NOCASE AS channel_type
 from claim c
 inner join provider_view p on c.provider_id = p.provider_id
 INNER JOIN drug_view d ON c.drug_name_id = d.drug_name_id
@@ -191,3 +199,39 @@ GROUP BY
 ORDER BY
     specialty_indicator,
     brand_or_generic;
+
+Query 6: Total Claims and Net Money by Channel Type for a Specific Year 
+-- Show total number of claims and total net money for each channel type in 2021.
+Select channel_type, count(claim_id) as total_claims, sum(net_mony) as total_net_money
+FROM pharmacy_claims_drug_provider_view
+WHERE fill_dt BETWEEN '2021-01-01' AND '2021-12-31'
+GROUP BY channel_type
+ORDER BY channel_type;
+
+Query 7: Top 10 Drugs by Total Net Money in 2022
+SELECT
+    drug_name,
+    SUM(net_mony) AS total_net_money
+FROM
+    pharmacy_claims_drug_provider_view
+WHERE
+    STRFTIME('%Y', fill_dt) = '2021'
+GROUP BY
+    drug_name
+ORDER BY
+    total_net_money DESC
+LIMIT 10;
+
+Query 8: Average Days Supply by Drug Category in 2021
+SELECT
+    drug_category_name,
+    AVG(days_supply) AS average_days_supply
+FROM
+    pharmacy_claims_drug_provider_view
+WHERE
+    STRFTIME('%Y', fill_dt) = '2021'
+GROUP BY
+    drug_category_name
+ORDER BY
+    average_days_supply DESC
+LIMIT 10;
