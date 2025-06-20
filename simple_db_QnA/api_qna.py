@@ -31,6 +31,7 @@ few relevant columns given the question.
 Pay attention to use only the column names that you can see in the schema
 description. Be careful to not query for columns that do not exist. Also,
 pay attention to which column is in which table.
+For decimal numbers, limit the precision to 2 decimal places.
 
 DO NOT make any statements that contain (INSERT, UPDATE, DELETE, DROP etc.) to the database.
 Output only 1 query even for multiple questions. 
@@ -39,6 +40,104 @@ Do not add any explanation. Do not add any comments.
 
 Only use the following tables:
 {table_info}
+
+You can refer to the following sample questions to understand the type of questions and queries you can generate:
+Question 1: Total Net Money by Drug Category of Nausea and Year
+--sql 1
+SELECT
+    STRFTIME('%Y', fill_dt) AS fill_year,
+    drug_category_name,
+    SUM(net_mony) AS total_net_money
+FROM
+    pharmacy_claims_Provider_view
+WHERE
+    drug_category_name like '%Nausea%'
+GROUP BY
+    fill_year,
+    drug_category_name
+ORDER BY
+    fill_year,
+    total_net_money DESC;
+---
+
+Question 2: Top 5 Prescribers by Quantity Dispensed for a Specific Drug Type
+
+--sql 2
+SELECT
+    prescriber_id,
+    SUM(quantity) AS total_quantity_dispensed,
+    COUNT(DISTINCT claim_id) AS total_claims
+FROM
+    pharmacy_claims_Provider_view
+WHERE
+    drug_name like  '%SYNTHROID%' -- Replace with any specific drug name
+GROUP BY
+    prescriber_id
+ORDER BY
+    total_quantity_dispensed DESC
+LIMIT 5;
+---
+
+Question 3: Average Copay and Admin Fee per Claim for Pharmacy vs. Medical Benefits
+--sql 3
+SELECT
+    benefit_type_Pharmacy_or_Medical,
+    AVG(copay_mony) AS average_copay,
+    AVG(admin_mony) AS average_admin_fee,
+    COUNT(claim_id) AS number_of_claims
+FROM
+    pharmacy_claims_Provider_view
+GROUP BY
+    benefit_type_Pharmacy_or_Medical;
+---
+
+Question 4: Count of Unique Members and Claims by Provider State in New York, Texas and Kentucky
+--sql 4
+SELECT
+    provider_location_state,
+    provider_location_city,
+    COUNT(DISTINCT member_id) AS unique_members,
+    COUNT(DISTINCT claim_id) AS unique_claims
+FROM
+    pharmacy_claims_Provider_view
+WHERE
+    provider_location_state in ('TX','NY', 'KY') AND provider_location_city IS NOT NULL
+GROUP BY
+    provider_location_state,
+    provider_location_city
+ORDER BY
+    provider_location_state,
+    provider_location_city;
+---
+
+Question 5: Provide Brand vs. Generic Drug Dispensing by Specialty Indicator (with Percentage)
+--sql 5
+SELECT
+    specialty_indicator,
+    brand_or_generic,
+    COUNT(claim_id) AS total_claims,
+    SUM(quantity) AS total_quantity,
+    CAST(COUNT(claim_id) * 100.0 / SUM(COUNT(claim_id)) OVER (PARTITION BY specialty_indicator) AS REAL) AS percentage_of_claims_in_group
+FROM
+    pharmacy_claims_Provider_view
+GROUP BY
+    specialty_indicator,
+    brand_or_generic
+ORDER BY
+    specialty_indicator,
+    brand_or_generic;
+
+Question 6: What is the total number of claims group by days supply partition by provider location in TX, NY, PA and CA. Provider location as column headers
+--sql 6
+SELECT    days_supply,    COUNT(claim_id) AS total_claims,    SUM(CASE WHEN provider_location_state = 'TX' THEN 1 ELSE 0 END) AS TX,
+    SUM(CASE WHEN provider_location_state = 'NY' THEN 1 ELSE 0 END) AS NY,    SUM(CASE WHEN provider_location_state = 'PA' THEN 1 ELSE 0 END) AS PA,
+        SUM(CASE WHEN provider_location_state = 'CA' THEN 1 ELSE 0 END) AS CA
+        FROM    pharmacy_claims_Provider_view 
+        WHERE     provider_location_state IN ('TX', 'NY', 'PA', 'CA') 
+        GROUP BY    days_supply
+        ORDER BY    days_supply;
+
+
 """
 
 user_prompt = "Question: {input}"
@@ -47,8 +146,8 @@ query_prompt_template = ChatPromptTemplate(
     [("system", system_message), ("user", user_prompt)]
 )
 
-for message in query_prompt_template.messages:
-    message.pretty_print()
+#for message in query_prompt_template.messages:
+#    message.pretty_print()
 
 ## ------ Step 2: Generate Query
 
@@ -63,15 +162,18 @@ class QueryOutput(TypedDict):
 
 def write_query(state: State):
     """Generate SQL query to fetch information."""
+    db._view_support = True  # Enable view support for the database
     prompt = query_prompt_template.invoke(
         {
             "dialect": db.dialect,
             "top_k": 100,
-            "table_info": db.get_table_info(['RX_CLAIM', 'drug']),
+            #"table_info": db.get_table_info(['claim']),
+            #"table_info": db.get_table_info(['claim_view', 'drug_view', 'drug_name_view', 'provider_view', 'drug_category_view']),
+            "table_info": db.get_table_info(['pharmacy_claims_Provider_view']),
             "input": state["question"],
         }
     )
-    # print("Prompt:", prompt)    
+    print("Prompt:", prompt)    
     # print("Prompt:", prompt.messages[1].content)
 
     structured_llm = llm.with_structured_output(QueryOutput)

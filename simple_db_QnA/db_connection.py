@@ -14,8 +14,8 @@ load_dotenv()
 
 
 # This is for Sample DB.
-db = SQLDatabase.from_uri(os.getenv("DB_URI"))
-db._sample_rows_in_table_info = False
+db = SQLDatabase.from_uri(os.getenv("DB_URI"), view_support=True, sample_rows_in_table_info=False)
+db._sample_rows_in_table_info = 10
 #print(db.dialect)
 #print(db.get_usable_table_names())
 #db.run("SELECT name FROM sqlite_master LIMIT 10;")
