@@ -108,6 +108,9 @@ INNER JOIN drug_category_view dc ON c.drug_cat_id = dc.drug_cat_id
 INNER JOIN drug_name_view dn ON c.drug_name_id = dn.drug_name_id
 
 
+CREATE TABLE pharmacy_claims_drug_provider_view (client_id TEXT, member_id TEXT, fill_dt TEXT, claim_nbr TEXT, net_mony REAL, copay_mony REAL, admin_mony REAL, third_party_mony REAL, quantity REAL, days_supply INTEGER, asp REAL, asp_use INTEGER, awp REAL, dispense_fee REAL, ingredient_cost REAL, sales_tax REAL, claim_id INTEGER, is_pharmacy TEXT, obsolete_date TEXT
+
+
 select * from pharmacy_claims_Provider_view 
 Order By Random()
 Limit 10;
