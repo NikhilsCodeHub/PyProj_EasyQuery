@@ -69,18 +69,22 @@ class QueryOutput(TypedDict):
 def write_query(state: State):
     """Generate SQL query to fetch information and return token usage info."""
     usage = {}
+    #table_schema = db.get_table_info(['vw_providers_t', 'vw_drug_t', 'vw_drug_name_t', 'vw_claim_t', 'vw_drug_category_t','vw_place_of_service_t','vw_channel_t','vw_drug_source_type_t','vw_claim_type_t','vw_brand_generic_t'])
+    #"table_info": db.get_table_info(['claim_view', 'drug_view', 'drug_name_view', 'provider_view', 'drug_category_view']),
+    #table_schema = db.get_table_info(['vw_all_drug_claims_data'])  # Get table schema for the views used in the query
+    table_schema = read_from_file('Table_Schema')  # Get table schema for the views used in the query
     db._view_support = True  # Enable view support for the database
     prompt = query_prompt_template.invoke(
         {
             "dialect": db.dialect,
             "top_k": 100,
-            #"table_info": db.get_table_info(['claim_view', 'drug_view', 'drug_name_view', 'provider_view', 'drug_category_view']),
-            "table_info": db.get_table_info(['pharmacy_claims_drug_provider_view']),
-            "fewshot_examples": get_fewshot_examples(),
+            "table_info": table_schema,
+            "fewshot_examples": read_from_file('fewshot_examples'),
+            ##"fewshot_examples": "",
             "input": state["question"],
         }
     )
-    #print("Prompt:", prompt)
+    print("Table Schema:", table_schema)
     structured_llm = llm.with_structured_output(QueryOutput, include_raw=True)
     result = structured_llm.invoke(prompt)
     # Try to extract token usage if available
@@ -91,12 +95,18 @@ def write_query(state: State):
     print("Query Token Usage: ", usage)
     return {"query": json.loads(result["raw"].content)["query"], "token_usage": usage}
 
-def get_fewshot_examples():
-    """Get fewshot examples for the prompt."""
-    ## Read file fewshot_examples.txt
-    with open("app/few_shot_examples.txt", "r") as file:
-        fewshot_examples = file.read().strip()
-    return fewshot_examples
+def read_from_file(strtype = "fewshot_examples"):
+    if strtype == "fewshot_examples":
+        """Get fewshot examples for the prompt."""
+        ## Read file fewshot_examples.txt
+        with open("app/few_shot_examples.txt", "r") as file:
+            read_from_file = file.read().strip()
+    elif strtype == "Table_Schema":
+        """Get fewshot examples for the prompt."""
+        ## Read file fewshot_examples2.txt
+        with open("data/table_schema.txt", "r") as file:
+            read_from_file = file.read().strip() 
+    return read_from_file
 
 ## ------ Step 3 : Extract columns from query
 from typing_extensions import Annotated

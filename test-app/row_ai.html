@@ -123,6 +123,44 @@
         <span id="tokenInfoText">Input tokens: 0, Output tokens: 0</span>
       </div>
     </div>
+    <!-- Collapsible SQL Query Section -->
+    <div class="accordion mt-3" id="sqlQueryAccordion">
+      <div class="accordion-item">
+        <h2 class="accordion-header" id="headingQuery">
+          <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseQuery" aria-expanded="false" aria-controls="collapseQuery">
+            Show SQL Query
+          </button>
+        </h2>
+        <div id="collapseQuery" class="accordion-collapse collapse" aria-labelledby="headingQuery" data-bs-parent="#sqlQueryAccordion">
+          <div class="accordion-body">
+            <pre id="sqlQueryText" style="white-space: pre-wrap; word-break: break-all; margin:0;"></pre>
+          </div>
+        </div>
+      </div>
+    </div>
+    <script>
+      // Update SQL query text when new QnA is added
+      function updateSQLQuery(query) {
+        $('#sqlQueryText').text(query || '');
+      }
+
+      // Hook into addToQnAHistory to update the SQL query display
+      const originalAddToQnAHistory = addToQnAHistory;
+      addToQnAHistory = function(question, query, columns, results, answer, token_info) {
+        originalAddToQnAHistory.apply(this, arguments);
+        updateSQLQuery(query);
+      };
+
+      // Also update when showing history
+      const originalShowQnAHistory = showQnAHistory;
+      showQnAHistory = function(intHistoryId) {
+        const result = originalShowQnAHistory.apply(this, arguments);
+        if (intHistoryId >= 0 && intHistoryId < questionhistory.length) {
+          updateSQLQuery(questionhistory[intHistoryId].query);
+        }
+        return result;
+      };
+    </script>
     </div>
   </div>
 
@@ -319,7 +357,7 @@
                   if (response && response.result) {
                       const parsedData = response.result;
 
-                      if (parsedData && parsedData.length > 1) {
+                      if (parsedData && parsedData.length > 1 || parsedData[0].length > 2) {
                           // Extract headers (first row)
                           //const headers = parsedData.shift();
                           const headers = response.columns;
@@ -365,6 +403,7 @@
                           $('#tableContainer').hide();
                       }
                       console.log("Input Token Info: ", response.token_info.input_tokens);
+                      console.log("Parsed Data: ", parsedData[0].length);
                       addToQnAHistory(question, response.query, response.columns,response.result,response.answer, response.token_info);
                       showTokenInfo(response.token_info || {});
                   } else {
@@ -388,8 +427,8 @@
     // If token_info is a flat object with input_tokens/output_tokens, use directly
     if (typeof token_info.input_tokens !== 'undefined' && typeof token_info.output_tokens !== 'undefined') {
         $("#tokenInfoText").text(''); // Clear previous text'')');
-        
-        $("#tokenInfoText").text('Input tokens: ${token_info.input_tokens}, Output tokens: ${token_info.output_tokens}');
+        console.log("Token Info:", token_info.input_tokens, " : ", token_info.output_tokens); // Log for debugging
+        $("#tokenInfoText").text(`Input tokens: ${token_info.input_tokens}, Output tokens: ${token_info.output_tokens}`);
         $("#tokenInfoSection").show();
         return;
     }

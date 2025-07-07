@@ -4,36 +4,37 @@ Question 1: Show total cost for each month Feb, Mar, Apr. Group by provider loca
 --sql 1
 SELECT
     provider_location_state,
-    channel_type,
-    SUM(CASE WHEN STRFTIME('%m', fill_dt) = '02' THEN net_mony ELSE 0 END) AS February,
-    SUM(CASE WHEN STRFTIME('%m', fill_dt) = '03' THEN net_mony ELSE 0 END) AS March,
-    SUM(CASE WHEN STRFTIME('%m', fill_dt) = '04' THEN net_mony ELSE 0 END) AS April
+    channel_name,
+    SUM(CASE WHEN STRFTIME('%m', fill_date) = '02' THEN net_money ELSE 0 END) AS February,
+    SUM(CASE WHEN STRFTIME('%m', fill_date) = '03' THEN net_money ELSE 0 END) AS March,
+    SUM(CASE WHEN STRFTIME('%m', fill_date) = '04' THEN net_money ELSE 0 END) AS April
 FROM
-    pharmacy_claims_drug_provider_view
+    vw_all_drug_claims_data
 WHERE
-    STRFTIME('%m', fill_dt) IN ('02', '03', '04')
+    STRFTIME('%m', fill_date) IN ('02', '03', '04')
 GROUP BY
     provider_location_state,
-    channel_type
+    channel_name
 ORDER BY
     provider_location_state,
-    channel_type
+    channel_name
 LIMIT 100;
+
 
 ---
 Question 2: Total Net Money by Drug Category and Year
 --sql 2
 SELECT
-    STRFTIME('%Y', fill_dt) AS fill_year,
-    drug_category_name,
-    SUM(net_mony) AS total_net_money
+    STRFTIME('%Y', fill_date) AS fill_year,
+    drug_category_description,
+    SUM(net_money) AS total_net_money
 FROM
-    pharmacy_claims_drug_provider_view
+    vw_all_drug_claims_data
 WHERE
-    drug_category_name IS NOT NULL
+    drug_category_description IS NOT NULL
 GROUP BY
     fill_year,
-    drug_category_name
+    drug_category_description
 ORDER BY
     fill_year,
     total_net_money DESC;
@@ -41,21 +42,21 @@ ORDER BY
 
 Query 3: Total Claims and Net Money by Channel Type for a Specific Year 
 -- Show total number of claims and total net money for each channel type in 2021.
-Select channel_type, count(claim_id) as total_claims, sum(net_mony) as total_net_money
-FROM pharmacy_claims_drug_provider_view
-WHERE fill_dt BETWEEN '2021-01-01' AND '2021-12-31'
-GROUP BY channel_type
-ORDER BY channel_type;
+Select channel_name, count(claim_id) as total_claims, sum(net_money) as total_net_money
+FROM vw_all_drug_claims_data
+WHERE fill_date BETWEEN '2021-01-01' AND '2021-12-31'
+GROUP BY channel_name
+ORDER BY channel_name;
 ---
 
 Query 4: Top 10 Drugs by Total Net Money in 2022
 SELECT
     drug_name,
-    SUM(net_mony) AS total_net_money
+    SUM(net_money) AS total_net_money
 FROM
-    pharmacy_claims_drug_provider_view
+    vw_all_drug_claims_data
 WHERE
-    STRFTIME('%Y', fill_dt) = '2021'
+    STRFTIME('%Y', fill_date) = '2021'
 GROUP BY
     drug_name
 ORDER BY
@@ -64,15 +65,16 @@ LIMIT 10;
 ----- 
 
 Query 5: Average Days Supply by Drug Category in 2021
+
 SELECT
-    drug_category_name,
+    drug_category_description,
     AVG(days_supply) AS average_days_supply
 FROM
-    pharmacy_claims_drug_provider_view
+    vw_all_drug_claims_data
 WHERE
-    STRFTIME('%Y', fill_dt) = '2021'
+    STRFTIME('%Y', fill_date) = '2021'
 GROUP BY
-    drug_category_name
+    drug_category_description
 ORDER BY
     average_days_supply DESC
 LIMIT 10;
@@ -82,31 +84,28 @@ Question 6: Count of Unique Members and Claims by Provider State in New York, Te
 --sql 6
 SELECT
     provider_location_state,
-    provider_location_city,
     COUNT(DISTINCT member_id) AS unique_members,
-    COUNT(DISTINCT claim_id) AS unique_claims
+    COUNT(claim_id) AS unique_claims
 FROM
-    pharmacy_claims_drug_provider_view
+    vw_all_drug_claims_data
 WHERE
-    provider_location_state in ('TX','NY', 'KY') AND provider_location_city IS NOT NULL
+    provider_location_state in ('TX','NY', 'KY')
 GROUP BY
-    provider_location_state,
-    provider_location_city
+    provider_location_state
 ORDER BY
-    provider_location_state,
-    provider_location_city;
+    provider_location_state
 ---
 
 Question 7: Provide Brand vs. Generic Drug Dispensing by Specialty Indicator (with Percentage)
 --sql 7
 SELECT
-    specialty_indicator,
-    brand_or_generic,
+    claim_specialty_indicator_flag AS specialty_indicator,
+    brand_generic_description AS brand_or_generic,
     COUNT(claim_id) AS total_claims,
     SUM(quantity) AS total_quantity,
-    CAST(COUNT(claim_id) * 100.0 / SUM(COUNT(claim_id)) OVER (PARTITION BY specialty_indicator) AS REAL) AS percentage_of_claims_in_group
+    CAST(COUNT(claim_id) * 100.0 / SUM(COUNT(claim_id)) OVER (PARTITION BY claim_specialty_indicator_flag) AS REAL) AS percentage_of_claims_in_group
 FROM
-    pharmacy_claims_drug_provider_view
+    vw_all_drug_claims_data
 GROUP BY
     specialty_indicator,
     brand_or_generic
@@ -119,7 +118,7 @@ Question 8: What is the total number of claims group by days supply partition by
 SELECT    days_supply,    COUNT(claim_id) AS total_claims,    SUM(CASE WHEN provider_location_state = 'TX' THEN 1 ELSE 0 END) AS TX,
     SUM(CASE WHEN provider_location_state = 'NY' THEN 1 ELSE 0 END) AS NY,    SUM(CASE WHEN provider_location_state = 'PA' THEN 1 ELSE 0 END) AS PA,
         SUM(CASE WHEN provider_location_state = 'CA' THEN 1 ELSE 0 END) AS CA
-        FROM    pharmacy_claims_drug_provider_view 
+        FROM    vw_all_drug_claims_data 
         WHERE     provider_location_state IN ('TX', 'NY', 'PA', 'CA') 
         GROUP BY    days_supply
         ORDER BY    days_supply;

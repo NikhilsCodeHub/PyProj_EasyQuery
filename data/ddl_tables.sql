@@ -1,4 +1,3 @@
-
 ATTACH DATABASE 'data/sample_data.db' AS destinationDB;
 
 CREATE TABLE destinationDB.providers_t 
@@ -17,7 +16,7 @@ CREATE TABLE destinationDB.claim_t
     claim_id INTEGER PRIMARY KEY,   --- maps to claim_id
     claim_nbr TEXT,  --- maps to claim_nbr
     member_id TEXT,
-    fill_dt TEXT,  --- maps to prim_dt
+    fill_date DATETIME,  --- maps to prim_dt
     claim_type_cd TEXT,  -- maps to Benefit Type - Medical and Pharmacy
     channel_id INTEGER,  -- Retail, Mail Order, Etc.
     specialty_indicator_flag TEXT,  
@@ -104,4 +103,10 @@ Create Table destinationDB.place_of_service_t
     place_of_service_id INTEGER PRIMARY KEY,
     place_of_service_description TEXT
 );
+
+-- Indexes for claim_t
+CREATE INDEX IF NOT EXISTS idx_claim_t_drug_name_id ON claim_t(drug_name_id);
+CREATE INDEX IF NOT EXISTS idx_claim_t_drug_category_id ON claim_t(drug_category_id);
+CREATE INDEX IF NOT EXISTS idx_claim_t_provider_id ON claim_t(provider_id);
+CREATE INDEX IF NOT EXISTS idx_claim_t_channel_id ON claim_t(channel_id);
 

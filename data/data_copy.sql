@@ -67,3 +67,7 @@ INSERT INTO destinationDB.claim_t
 (claim_id, claim_nbr, member_id, fill_dt, claim_type_cd, channel_id, specialty_indicator_flag, brand_generic_cd, NDC, drug_name_id, drug_category_id, net_money, copay_money, admin_money, third_party_money, provider_id, place_of_svc_id, quantity, days_supply, asp, awp, dispense_fee, ingredient_cost, days_supply_claim_count)
 SELECT claim_id, claim_nbr, member_id, prim_dt, benefit_type, channel_id, specialty_ind, brand_generic, cd, drug_name_id, drug_cat_id, net_mony, copay_mony, admin_mony, third_party_mony, provider_id, place_of_svc, quantity, days_supply, asp, awp, disp_fee, ingred_cost, days_supply_claim_count
 FROM sourceDB.claim;
+
+
+
+select * from vw_all_drug_claims_data limit 10000;
