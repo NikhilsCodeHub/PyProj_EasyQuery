@@ -1,161 +1,7 @@
-    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/2.3.2/css/dataTables.dataTables.css">
-    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/buttons/3.2.3/css/buttons.dataTables.css">
-    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
-    <script src="https://cdn.datatables.net/2.3.2/js/dataTables.js"></script>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
-    <script src="https://cdn.datatables.net/2.0.8/js/dataTables.bootstrap5.min.js"></script>
-
-    <script src="https://cdn.datatables.net/buttons/3.2.3/js/dataTables.buttons.js">  </script>
-    <script src="https://cdn.datatables.net/buttons/3.2.3/js/buttons.dataTables.js">  </script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js">  </script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js">  </script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js">  </script>
-    <script src="https://cdn.datatables.net/buttons/3.2.3/js/buttons.html5.min.js">  </script>
-    <script src="https://cdn.datatables.net/buttons/3.2.3/js/buttons.print.min.js">  </script>
-
-
-
-
-<style>
-/* ===== BUTTONS ===== */
-.btn {
-  text-transform: uppercase;
-  box-shadow: none !important;
-  padding: 0.3125rem 1rem;
-}
-.btn.btn-square {
-  border-radius: 0px;
-}
-.btn.btn-pill {
-  border-radius: 20px;
-}
-@media (min-width: 768px) {
-  .btn.btn-pill {
-    border-radius: 30px;
-  }
-}
-@media (min-width: 768px) {
-  .btn {
-    padding: 0.56rem 1.5rem;
-  }
-}
-
-/* Button Circle */
-.btn-rounded-circle {
-  border-radius: 50%;
-}
-
-/* Button Icon */
-.btn-icon {
-  width: 43px;
-  height: 43px;
-  padding: 0.312rem 0.625rem;
-  color: #ffffff;
-  font-size: 1.25rem;
-}
-.btn-icon:hover {
-  color: #ffffff;
-}
-
-/* Button Refress */
-.btn-refress {
-  background: #f0f1f5;
-  padding: 0 0.375rem;
-  font-size: 1.0625rem;
-}
-
-.btn-dark {
-  color: #fff;
-  background-color: #454545;
-  border-color: #454545; }
-  .btn-dark:hover {
-    color: #fff;
-    background-color: #323232;
-    border-color: #2c2c2c; }
-  .btn-dark:focus, .btn-dark.focus {
-    box-shadow: 0 0 0 0.2rem rgba(97, 97, 97, 0.5); }
-  .btn-dark.disabled, .btn-dark:disabled {
-    color: #fff;
-    background-color: #454545;
-    border-color: #454545; }
-  .btn-dark:not(:disabled):not(.disabled):active, .btn-dark:not(:disabled):not(.disabled).active,
-  .show > .btn-dark.dropdown-toggle {
-    color: #fff;
-    background-color: #2c2c2c;
-    border-color: #252525; }
-    .btn-dark:not(:disabled):not(.disabled):active:focus, .btn-dark:not(:disabled):not(.disabled).active:focus,
-    .show > .btn-dark.dropdown-toggle:focus {
-      box-shadow: 0 0 0 0.2rem rgba(97, 97, 97, 0.5); }
-
-        /* Custom CSS for dark gray table headers */
-        #myDataTable thead th {
-            background-color: #343a40; /* Darker gray background */
-            color: #ffffff; /* White text for contrast */
-            border-color: #454d55; /* Slightly darker border for separation */
-        }
-  </style>
-
-<div class="col-xl-8">
-
-  <!-- Sales by Product -->
-  <div class="card card-default" style="width:100%;">
-    <div class="card-header align-items-center">
-      <h2 class="">Ai Response</h2>
-    </div>
-    <div class="card-body">
-      <div class="tab-content" id="tableContainer" style="display: none;">
-        <table id="myDataTable" class="table table-striped table-bordered table-hover row-border" style="width:100%;">
-            <thead>
-                </thead>
-            <tbody>
-                </tbody>
-        </table>
-      </div>
-      <div id="loadingMessage" style="display: none; color: blue;">Loading data...</div>
-      <div id="OneLineMessage" style="display: none; color: rgb(2, 44, 10);">...</div>
-      <div id="errorMessage" style="display: none; color: red;"></div>
-    </div>
-  </div>
-
-</div>
-<div class="col-xl-4">
-
-  <!-- Chat -->
-  <div class="card card-default chat">
-    <div id="historySection" >
-      <div class="card-header">
-        <h2>QnA History</h2>
-      </div>
-      <div class="card-body">
-        <ul id="historyList" class="list-group">
-          <!-- History items will be dynamically added here -->
-        </ul>
-      </div>
-    </div>
-    <div class="chat-footer">
-      <form>
-        <div class="input-group input-group-chat">
-          <textarea class="form-control" rows="4" id="questionInput" placeholder="Enter your query here (e.g., 'Show top 10 diseases')"></textarea>
-          </div>
-        <div class="text-center mt-4 mb-5">
-          <button id="submitQuestion" class="btn btn-primary btn-sl-sm mr-3" type="button"><span
-                  class="mr-2"><i class="fa fa-paper-plane"></i></span> Send</button>
-          <button id="clearall" class="btn btn-dark btn-sl-sm" type="button" ><span class="mr-2"><i
-                      class="fa fa-times" aria-hidden="true"></i></span> Clear</button>
-        </div>
-      </form>
-    </div>
-  </div>
-
-</div>
-    <script>
-      questionhistory = []; // Array to store question history'
+ questionhistory = []; // Array to store question history'
 
 // -- clear the page when Clear button is clicked
-      $('#clearall').on('click', function() {
-        clear();
-      });
+
   function clear() {
     // Clear the question input field
     $('#questionInput').val('');
@@ -168,9 +14,23 @@
     $('#OneLineMessage').hide();
     $('#errorMessage').hide();
     $('#tableContainer').hide();
+    $("#tokenInfoText").text(''); // Clear token info text
+    $("#tokenInfoSection").hide(); // Hide token info section
+    // Clear the history list
+    $('#historyList').empty();
+    // Clear the question history array
+    questionhistory = [];
+    // Optionally, you can also reset the history ID counter if needed
+    // Reset the history ID counter (if you want to start from 1 again)
+    // questionhistory.length = 0; // Reset the length to 0
+    // Alternatively, you can just reinitialize the array
+    // questionhistory = []; // Reinitialize the array
+    console.log("Cleared all data and reset the page.");
+    // Optionally, you can update the UI or perform other actions here
+    $('#errorMessage').text('All data cleared.').show();
   }
 
-  function addToQnAHistory(question, query, columns, results, answer) {
+  function addToQnAHistory(question, query, columns, results, answer, token_info) {
     // Create a new entry for the question history
     const newEntry = {
       id: questionhistory.length + 1, // Incremental ID
@@ -179,14 +39,15 @@
       query: query,
       columns: columns, // Assuming columns is an array of column names
       result: results,
-      answer: answer
+      answer: answer,
+      token_info: token_info // Uncomment if you want to store token info
     };
 
     // Add the new entry to the history array
     questionhistory.push(newEntry);
 
     // Log the updated history for debugging
-    console.log("Updated QnA History:", questionhistory);
+    //console.log("Updated QnA History:", questionhistory);
     console.log("Objects in QnA History:", questionhistory.length);
     // Optionally, you can update the UI or perform other actions here
     // For example, you could update a dropdown or a list to show the history
@@ -205,6 +66,8 @@
       $('#tableContainer').hide();
       $('#loadingMessage').hide();
       $('#OneLineMessage').hide();
+      $('#sqlQueryAccordion').hide(); // Clear the SQL Query display
+      $('#sqlQueryText').text(''); // Clear the SQL Query text    
       return -1; // Return -1 for invalid ID
     }
 
@@ -213,6 +76,8 @@
       $('#tableContainer').hide();
       $('#OneLineMessage').hide();
       $('#loadingMessage').hide();
+      $('#sqlQueryAccordion').show(); // Clear the SQL Query display
+      //$('#sqlQueryText').text(''); // Clear the SQL Query text   
       return -1; // Return -1 for no data
     }
     if (questionhistory[intHistoryId].result.length > 1) {
@@ -227,7 +92,8 @@
       $('#OneLineMessage').hide();
       $('#loadingMessage').show();
       $('#tableContainer').hide(); // Hide table while loading
-    
+      $('#sqlQueryAccordion').hide(); // Clear the SQL Query display
+      $('#sqlQueryText').text(''); // Clear the SQL Query text   
     headers = questionhistory[intHistoryId].columns; // Assuming columns is an array of column names
     columns = headers.map(header => ({ title: header }));
     // Initialize DataTables with new data
@@ -247,6 +113,7 @@
     });
     $('#loadingMessage').hide();
     $('#tableContainer').show(); // Show table after data is loaded
+    $('#sqlQueryAccordion').show();
   }
     else if (questionhistory[intHistoryId].result.length === 1) {
       // Handle case where only one row is returned (e.g., no data)
@@ -256,16 +123,22 @@
       $('#OneLineMessage').text(answer).show();
       $('#errorMessage').hide();
       $('#tableContainer').hide();
+      $('#sqlQueryAccordion').show();
     } 
+    showTokenInfo(questionhistory[intHistoryId].token_info || {});
     return 1;
   }
 
-  // $(document).ready(function() {
+ $(document).ready(function() {
+      $('#clearall').on('click', function() {
+        clear();
+      });
       // Reference to the DataTable instance
       dataTableInstance = null;
-
+      console.log("Document is ready, initializing DataTable...");
       // Function to fetch data from the API and populate the table
       $('#submitQuestion').on('click', function() {
+          
           const question = $('#questionInput').val();
           if (!question) {
               $('#errorMessage').text('Please enter a question.').show();
@@ -279,7 +152,7 @@
           $('#tableContainer').hide(); // Hide table while loading
 
           // Replace 'YOUR_API_ENDPOINT' with the actual URL of your FastAPI endpoint
-          const apiEndpoint = 'https://192.168.86.39/api/v2/qna'; // e.g., 'http://127.0.0.1:8000/query' or whatever your FastAPI endpoint is
+          const apiEndpoint = 'http://localhost:8123/api/v2/qna'; // e.g., 'http://127.0.0.1:8000/query' or whatever your FastAPI endpoint is
 
           $.ajax({
               url: apiEndpoint,
@@ -293,7 +166,8 @@
                   if (response && response.result) {
                       const parsedData = response.result;
 
-                      if (parsedData && parsedData.length > 1) {
+                      //console.log("Parsed Data:", parsedData.length); // Log parsed data for debugging
+                      if ((parsedData && parsedData.length > 1) || (parsedData.length>0 && parsedData[0].length > 2)) {
                           // Extract headers (first row)
                           //const headers = parsedData.shift();
                           const headers = response.columns;
@@ -334,23 +208,79 @@
                           $('#OneLineMessage').text(answer).show();
                           $('#errorMessage').hide();
                           $('#tableContainer').hide();
+                          $('#sqlQueryAccordion').show();
                       } else {
                           $('#errorMessage').text('No data returned from the API.').show();
                           $('#tableContainer').hide();
+                          $('#sqlQueryAccordion').hide();
                       }
-                      addToQnAHistory(question, response.query, response.columns,response.result,response.answer);
+                      //console.log("Input Token Info: ", response.token_info.input_tokens);
+                      //console.log("Parsed Data: ", parsedData[0].length);
+                      addToQnAHistory(question, response.query, response.columns,response.result,response.answer, response.token_info);
+                      showTokenInfo(response.token_info || {});
                   } else {
                       $('#errorMessage').text('Invalid API response format (missing "result" key).').show();
                       $('#tableContainer').hide();
+                      $("#tokenInfoSection").hide();
+                      $('#sqlQueryAccordion').hide();
                   }
               },
               error: function(jqXHR, textStatus, errorThrown) {
                   $('#loadingMessage').hide();
                   $('#errorMessage').text('API Error: ' + textStatus + ' - ' + errorThrown).show();
                   console.error("AJAX error:", textStatus, errorThrown, jqXHR.responseText);
+                  $("#tokenInfoSection").hide();
                   $('#tableContainer').hide();
+                  $('#sqlQueryAccordion').hide();
               }
           });
       });
-  // });
-    </script>
+   });
+
+  function showTokenInfo(token_info) {
+    // If token_info is a flat object with input_tokens/output_tokens, use directly
+    if (typeof token_info.input_tokens !== 'undefined' && typeof token_info.output_tokens !== 'undefined') {
+        $("#tokenInfoText").text(''); // Clear previous text'')');
+        //console.log("Token Info:", token_info.input_tokens, " : ", token_info.output_tokens); // Log for debugging
+        $("#tokenInfoText").text(`Input tokens: ${token_info.input_tokens}, Output tokens: ${token_info.output_tokens}`);
+        $("#tokenInfoSection").show();
+        $('#sqlQueryAccordion').show();
+        return;
+    }
+    // Otherwise, sum tokens from all steps (write_query, extract_columns, generate_answer)
+    // let total_input = 0;
+    // let total_output = 0;
+    // ["write_query", "extract_columns", "generate_answer"].forEach(function(key) {
+    //     let usage = token_info[key];
+    //     if (usage && usage.input_tokens !== undefined) total_input += parseInt(usage.input_tokens);
+    //     if (usage && usage.output_tokens !== undefined) total_output += parseInt(usage.output_tokens);
+    // });
+    // $("#tokenInfoText").text(`Input tokens: ${total_input}, Output tokens: ${total_output}`);
+    // $("#tokenInfoSection").show();
+}
+
+
+
+ // Update SQL query text when new QnA is added
+  function updateSQLQuery(query) {
+    $('#sqlQueryText').text(query || '');
+  }
+
+  // Hook into addToQnAHistory to update the SQL query display
+  const originalAddToQnAHistory = addToQnAHistory;
+  addToQnAHistory = function(question, query, columns, results, answer, token_info) {
+    originalAddToQnAHistory.apply(this, arguments);
+    updateSQLQuery(query);
+  };
+
+  // Also update when showing history
+  const originalShowQnAHistory = showQnAHistory;
+  showQnAHistory = function(intHistoryId) {
+    const result = originalShowQnAHistory.apply(this, arguments);
+    if (intHistoryId >= 0 && intHistoryId < questionhistory.length) {
+      //console.log("Showing history for ID:", intHistoryId);
+      //console.log("Query for history ID:", questionhistory[intHistoryId].query);
+      updateSQLQuery(questionhistory[intHistoryId].query);
+    }
+    return result;
+  };

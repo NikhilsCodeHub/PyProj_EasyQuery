@@ -22,6 +22,7 @@ app.add_middleware(
 
 
 app.mount("/tests", StaticFiles(directory="test-app"), name="tests")
+app.mount("/portal", StaticFiles(directory="portal"), name="tests")
 ## app.mount("/images", StaticFiles(directory="images"), name="images")
 
 ## http://127.0.0.1:8123/tests/row_ai.html
