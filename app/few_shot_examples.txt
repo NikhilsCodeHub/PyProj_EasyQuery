@@ -1,0 +1,141 @@
+Please refer to the following examples to understand the type of questions and SQL queries to generate:
+
+Question 1: Show total cost for each month Feb, Mar, Apr. Group by provider location state. Also group by channel type Show months as column headers.
+--sql 1
+SELECT
+    provider_location_state,
+    channel_name,
+    SUM(CASE WHEN STRFTIME('%m', fill_date) = '02' THEN net_money ELSE 0 END) AS February,
+    SUM(CASE WHEN STRFTIME('%m', fill_date) = '03' THEN net_money ELSE 0 END) AS March,
+    SUM(CASE WHEN STRFTIME('%m', fill_date) = '04' THEN net_money ELSE 0 END) AS April
+FROM
+    vw_all_drug_claims_data
+WHERE
+    STRFTIME('%m', fill_date) IN ('02', '03', '04')
+GROUP BY
+    provider_location_state,
+    channel_name
+ORDER BY
+    provider_location_state,
+    channel_name
+LIMIT 100;
+
+
+---
+Question 2: Total Net Money by Drug Category and Year
+--sql 2
+SELECT
+    STRFTIME('%Y', fill_date) AS fill_year,
+    drug_category_description,
+    round(SUM(net_money),2) AS total_net_money
+FROM
+    vw_all_drug_claims_data
+WHERE
+    drug_category_description IS NOT NULL
+GROUP BY
+    fill_year,
+    drug_category_description
+ORDER BY
+    fill_year,
+    total_net_money DESC;
+---
+
+Query 3: Total Claims and Net Money by Channel Type for a Specific Year 
+-- Show total number of claims and total net money for each channel type in 2021.
+Select channel_name, count(claim_id) as total_claims, round(sum(net_money),2) as total_net_money
+FROM vw_all_drug_claims_data
+WHERE fill_date BETWEEN '2021-01-01' AND '2021-12-31'
+GROUP BY channel_name
+ORDER BY channel_name;
+---
+
+Query 4: Top 10 Drugs by Total Net Money in 2022
+SELECT
+    drug_name,
+    Round(SUM(net_money),2) AS total_net_money
+FROM
+    vw_all_drug_claims_data
+WHERE
+    STRFTIME('%Y', fill_date) = '2021'
+GROUP BY
+    drug_name
+ORDER BY
+    total_net_money DESC
+LIMIT 10;
+----- 
+
+Query 5: Average Days Supply by Drug Category in 2021
+
+SELECT
+    drug_category_description,
+    AVG(days_supply) AS average_days_supply
+FROM
+    vw_all_drug_claims_data
+WHERE
+    STRFTIME('%Y', fill_date) = '2021'
+GROUP BY
+    drug_category_description
+ORDER BY
+    average_days_supply DESC
+LIMIT 10;
+---
+
+Question 6: Count of Unique Members and Claims by Provider State in New York, Texas and Kentucky
+--sql 6
+SELECT
+    provider_location_state,
+    COUNT(DISTINCT member_id) AS unique_members,
+    COUNT(claim_id) AS unique_claims
+FROM
+    vw_all_drug_claims_data
+WHERE
+    provider_location_state in ('TX','NY', 'KY')
+GROUP BY
+    provider_location_state
+ORDER BY
+    provider_location_state
+---
+
+Question 7: Provide Brand vs. Generic Drug Dispensing by Specialty Indicator (with Percentage)
+--sql 7
+SELECT
+    claim_specialty_indicator_flag AS specialty_indicator,
+    brand_generic_description AS brand_or_generic,
+    COUNT(claim_id) AS total_claims,
+    SUM(quantity) AS total_quantity,
+    CAST(COUNT(claim_id) * 100.0 / SUM(COUNT(claim_id)) OVER (PARTITION BY claim_specialty_indicator_flag) AS REAL) AS percentage_of_claims_in_group
+FROM
+    vw_all_drug_claims_data
+GROUP BY
+    specialty_indicator,
+    brand_or_generic
+ORDER BY
+    specialty_indicator,
+    brand_or_generic;
+
+Question 8: What is the total number of claims group by days supply partition by provider location in TX, NY, PA and CA. Provider location as column headers
+--sql 8
+SELECT    days_supply,    COUNT(claim_id) AS total_claims,    SUM(CASE WHEN provider_location_state = 'TX' THEN 1 ELSE 0 END) AS TX,
+    SUM(CASE WHEN provider_location_state = 'NY' THEN 1 ELSE 0 END) AS NY,    SUM(CASE WHEN provider_location_state = 'PA' THEN 1 ELSE 0 END) AS PA,
+        SUM(CASE WHEN provider_location_state = 'CA' THEN 1 ELSE 0 END) AS CA
+        FROM    vw_all_drug_claims_data 
+        WHERE     provider_location_state IN ('TX', 'NY', 'PA', 'CA') 
+        GROUP BY    days_supply
+        ORDER BY    days_supply;
+
+Question 9: Show total copay grouped by drugs categories for Jan, Mar and Jul in 2021. Show months as headers.
+--sql 9
+SELECT
+    drug_category_description,
+    SUM(CASE WHEN STRFTIME('%m', fill_date) = '01' THEN round(copay_money,2) ELSE 0 END) AS January,
+    SUM(CASE WHEN STRFTIME('%m', fill_date) = '03' THEN round(copay_money,2) ELSE 0 END) AS March,
+    SUM(CASE WHEN STRFTIME('%m', fill_date) = '07' THEN round(copay_money,2) ELSE 0 END) AS July
+FROM
+    vw_all_drug_claims_data
+WHERE
+    STRFTIME('%Y', fill_date) = '2021' AND STRFTIME('%m', fill_date) IN ('01', '03', '07')
+GROUP BY
+    drug_category_description
+ORDER BY
+    drug_category_description
+LIMIT 100;
