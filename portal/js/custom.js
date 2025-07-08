@@ -97,6 +97,9 @@
     headers = questionhistory[intHistoryId].columns; // Assuming columns is an array of column names
     columns = headers.map(header => ({ title: header }));
     // Initialize DataTables with new data
+    initializeDataTable(questionhistory[intHistoryId].result, columns);
+
+    /* -- Commneted : Replaced with above function call --
     dataTableInstance = $('#myDataTable').DataTable({
       data: questionhistory[intHistoryId].result,
       columns: columns,
@@ -111,6 +114,7 @@
         }
         } // Allow re-initialization if needed later
     });
+    */
     $('#loadingMessage').hide();
     $('#tableContainer').show(); // Show table after data is loaded
     $('#sqlQueryAccordion').show();
@@ -150,6 +154,9 @@
           $('#OneLineMessage').hide();
           $('#errorMessage').hide();
           $('#tableContainer').hide(); // Hide table while loading
+          $("#tokenInfoSection").hide();
+          $('#sqlQueryAccordion').hide();
+          $('#sqlQueryText').text('');
 
           // Replace 'YOUR_API_ENDPOINT' with the actual URL of your FastAPI endpoint
           const apiEndpoint = 'http://localhost:8123/api/v2/qna'; // e.g., 'http://127.0.0.1:8000/query' or whatever your FastAPI endpoint is
@@ -185,6 +192,8 @@
                           }
 
                           // Initialize DataTables with new data
+                          initializeDataTable(parsedData, columns);
+/*                           --- Commented : Replaced with an initialize function call.
                           dataTableInstance = $('#myDataTable').DataTable({
                               data: parsedData,
                               columns: columns,
@@ -199,6 +208,7 @@
                                   }
                               }
                           });
+*/
                           $('#tableContainer').show(); // Show table after data is loaded
                       } else if (parsedData.length === 1) {
                           // Handle case where only one row is returned (e.g., no data)
@@ -284,3 +294,50 @@
     }
     return result;
   };
+
+  function initializeDataTable(data, columns) {
+    /*
+    // Guess numeric columns by checking the first row
+    const sampleRow = data && data.length > 0 ? data[0] : [];
+    const formattedColumns = columns.map((col, idx) => {
+        // col may be an object ({title: ...}) or a string
+        const colTitle = col.title || col;
+        const isNumeric = sampleRow && !isNaN(parseFloat(sampleRow[idx])) && isFinite(sampleRow[idx]);
+        if (isNumeric) {
+            return {
+                title: colTitle,
+                render: function(data, type, row) {
+                    if (data === null || data === undefined || data === '') return data;
+                    const num = Number(data);
+                    return isNaN(num) ? data : num.toFixed(2);
+                }
+            };
+        } else {
+            return { title: colTitle };
+        }
+    });
+
+    // Destroy existing DataTable instance if it exists
+    if (window.dataTableInstance) {
+        window.dataTableInstance.destroy();
+        $('#myDataTable thead').empty();
+        $('#myDataTable tbody').empty();
+    }
+    */
+
+    // Initialize DataTable
+    window.dataTableInstance = $('#myDataTable').DataTable({
+        data: data,
+        columns: columns,
+        paging: true,
+        searching: true,
+        ordering: true,
+        info: true,
+        destroy: true,
+        layout: {
+            topStart: {
+                buttons: ['copy', 'csv', 'excel', 'pdf', 'print']
+            }
+        }
+    });
+}

@@ -31,7 +31,7 @@ few relevant columns given the question.
 Pay attention to use only the column names that you can see in the schema
 description. Be careful to not query for columns that do not exist. Also,
 pay attention to which column is in which table.
-For decimal numbers, limit the precision to 2 decimal places.
+For real numbers or numeric, use round function to 2 decimal places.
 
 DO NOT make any statements that contain (INSERT, UPDATE, DELETE, DROP etc.) to the database.
 Output only 1 query even for multiple questions. 

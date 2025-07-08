@@ -64,13 +64,29 @@ async def qna_response(qna_request: QnARequest):
             token_info["generate_answer"] = step["generate_answer"].get("token_usage", {})
         #print("Step:", step)
     input_tokens, output_tokens = sum_token_usage(token_info)
+    str_parsedResult = [] if not str_result else parse_result_string(str_result)
+    str_parsedResult = format_numeric_values(str_parsedResult)
+
     return {
         "query": str_query,
         "columns": str_columns,
-        "result": [] if not str_result else parse_result_string(str_result),
+        "result": str_parsedResult,
         "answer": str_answer,
         "token_info": {"input_tokens": str(input_tokens), "output_tokens": str(output_tokens)}
         }
+
+def format_numeric_values(data):
+    formatted = []
+    for row in data:
+        new_row = []
+        for val in row:
+            if isinstance(val, (int, float)):
+                new_row.append(f"{val:.2f}")
+            else:
+                new_row.append(val)
+        formatted.append(new_row)
+    return formatted
+
 
 
 def sum_token_usage(token_info):
