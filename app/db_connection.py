@@ -1,8 +1,8 @@
 from langchain_community.utilities import SQLDatabase
 import os
-from dotenv import load_dotenv
+#from dotenv import load_dotenv
 
-load_dotenv()
+#load_dotenv()
 
 
 # This is for Sample DB.

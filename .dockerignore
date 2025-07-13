@@ -1,0 +1,13 @@
+.dockerignore
+Dockerfile
+.git
+.venv
+app/.env
+__pycache__
+service/__pycache__/
+app/__pycache__/
+*.pyc
+*.pyo
+.pytest_cache
+.vscode
+.DS_Store
