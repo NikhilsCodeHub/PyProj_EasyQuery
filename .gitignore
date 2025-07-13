@@ -1,0 +1,5 @@
+service/__pycache__
+app/__pycache__
+.env
+portal/.DS_Store
+.DS_Store
