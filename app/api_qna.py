@@ -117,7 +117,7 @@ def extract_columns(state: State):
     """Use LLM to extract column names from the SQL query and return token usage info."""
     usage = {}
     prompt = (
-        "Given the following SQL query, list the column names that will appear in the result set, in order, as a Python list of strings.\n\n"
+        "Given the following SQL query, list the column names that will appear in the result set, in order, as a Python list of strings. Also reformat as 'Abcd Efgh' to show as table column headers\n\n"
         f"SQL Query:\n{state['query']}\n\n"
         "Columns:"
     )
