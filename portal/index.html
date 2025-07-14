@@ -43,20 +43,8 @@
 </style>
 </head>
 <body>
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark flex-column " style="height: 100vh; position: fixed; left: 0; top: 0; width: 200px; z-index: 1000;">
-        <a class="navbar-brand mb-4 mt-2 text-center w-100" href="#" style="font-size: 2rem;">Menu</a>
-        <ul class="navbar-nav flex-column w-100 align-items-center">
-            <li class="nav-item w-100 text-center">
-                <a class="nav-link" href="index.html" style="font-size: 1.25rem;">Introduction</a>
-            </li>
-            <li class="nav-item w-100 text-center">
-                <a class="nav-link" href="demo.html" style="font-size: 1.25rem;">Demo</a>
-            </li>
-            <li class="nav-item w-100 text-center">
-                <a class="nav-link" href="design.html" style="font-size: 1.25rem;">Design</a>
-            </li>            
-        </ul>
-    </nav>
+    <!-- Sidebar -->
+    <div id="sidebar-container"></div>
 
     <div style="margin-left: 180px;">
 
@@ -88,88 +76,31 @@
                         </div>                    
                 </div>
                 <div class="row">
-                        <div class="accordion mt-3" id="datasets">
-                        <div class="accordion-item">
-                            <h2 class="accordion-header" id="headingDatasets">
-                            <button class="accordion-button show" type="button" data-bs-toggle="collapse" data-bs-target="#collapseDatasets" aria-expanded="false" aria-controls="collapseDatasets">
-                                <h3> Datasets :</h1>
-                            </button>
-                            </h2>
-                            <div id="collapseDatasets" class="accordion-collapse show" aria-labelledby="headingDatasets" data-bs-parent="#datasets">
-                            <div class="accordion-body">    
-                                <h6 style="color: rgb(122, 1, 1);">* This dataset was randomly generated. None of the numbers are real. They are meant for demonstration purpose only.</h6>
-                                <div class="row">
-                                    <div class="col-md-4">
-                                        <ul class="list-group">
-                                            <li class="list-group-item active">Claims</li>
-                                            <li class="list-group-item">Claim ID</li>
-                                            <li class="list-group-item">Member ID</li>
-                                            <li class="list-group-item">Fill Date</li>
-                                            <li class="list-group-item">Claim Type</li>
-                                            <li class="list-group-item">Specialty Indicator</li>
-                                            <li class="list-group-item">Brand or Generic</li>
-                                            <li class="list-group-item">NDC</li>
-                                            <li class="list-group-item">Drug Category</li>                                            
-                                            <li class="list-group-item">Place of Service</li>
-                                            <li class="list-group-item">Quantity</li>
-                                            <li class="list-group-item">Average Sale Price</li>      
-                                        </ul>
-                                    </div>
-                                    <div class="col-md-4">
-                                        <ul class="list-group">
-                                            <li class="list-group-item active">Medications</li>
-                                            <li class="list-group-item">NDC</li>
-                                            <li class="list-group-item">Mfg Name</li>
-                                            <li class="list-group-item">Strength</li>
-                                            <li class="list-group-item">Drug Category</li>
-                                        </ul>
-                                    </div>  
-                                    <div class="col-md-4">
-                                        <ul class="list-group">
-                                            <li class="list-group-item active">Providers</li>
-                                            <li class="list-group-item">Provider Name</li>
-                                            <li class="list-group-item">Location City</li>
-                                            <li class="list-group-item">Location State</li>
-                                            <li class="list-group-item">Pharmacy or Clinic</li>
-                                        </ul>
-                                    </div>                                 
-                                </div>   
-                                <div class="row" style="margin-top: 20px;">
-                                    <div class="col-md-4" >
-                                        <ul class="list-group">
-                                            <li class="list-group-item active">Drug Name</li>
-                                            <li class="list-group-item">NDC</li>
-                                            <li class="list-group-item">Specialty</li>
-                                            <li class="list-group-item">Drug Source</li>
-                                        </ul>
-                                    </div>
-                                    <div class="col-md-4">
-                                        <ul class="list-group">
-                                            <li class="list-group-item active">Drug Source</li>
-                                            <li class="list-group-item">Single Source Brand</li>
-                                            <li class="list-group-item">Generic</li>
-                                            <li class="list-group-item">Multi Source Brand</li>
-                                        </ul>
-                                    </div>  
-                                    <div class="col-md-4">
-                                        <ul class="list-group">
-                                            <li class="list-group-item active">Channels</li>
-                                            <li class="list-group-item">Retail</li>
-                                            <li class="list-group-item">Mail Order</li>
-                                            <li class="list-group-item">Specialty</li>
-                                            <li class="list-group-item">Home Infusion</li>
-                                        </ul>
-                                    </div>                                 
-                                </div>       
-                                                                                                                    
-                            </div>
-                            </div>
-                        </div>
-                        </div>                    
+                    <!-- Dataset -->
+                    <div id="dataset-container"></div>
                 </div>                
             </div>
         </div>
+        
+  <!-- html component loader -->
+  <script>
 
+      fetch('sidebar.html')
+        .then(response => response.text())
+        .then(data => {
+          //console.log(document.getElementById('sidebar-container').innerHTML);
+          document.getElementById('sidebar-container').innerHTML = data;
+        })
+        .catch(error => console.error('Error loading sidebar:', error));
+
+        fetch('dataset.html')
+        .then(response => response.text())
+        .then(data => {
+          //console.log(document.getElementById('sidebar-container').innerHTML);
+          document.getElementById('dataset-container').innerHTML = data;
+        })
+        .catch(error => console.error('Error loading sidebar:', error));
+  </script>
 
 </body>
 </html>

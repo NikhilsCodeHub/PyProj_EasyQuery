@@ -159,7 +159,8 @@
           $('#sqlQueryText').text('');
 
           // Replace 'YOUR_API_ENDPOINT' with the actual URL of your FastAPI endpoint
-          const apiEndpoint = '/api/v2/qna'; // e.g., 'http://127.0.0.1:8000/query' or whatever your FastAPI endpoint is
+          // const apiEndpoint = 'http://localhost:7071/api/qna'; // e.g., 'http://127.0.0.1:8000/query' or whatever your FastAPI endpoint is
+          const apiEndpoint = '/api/v2/qna';
 
           $.ajax({
               url: apiEndpoint,
@@ -170,6 +171,7 @@
                   $('#loadingMessage').hide();
                   // console.log("API answer:", response.answer.content); // Log the entire response for debugging
                   console.log("API response:", response); // Log the entire response for debugging
+                  //console.log("Result : ", response["result"])
                   if (response && response.result) {
                       const parsedData = response.result;
 
