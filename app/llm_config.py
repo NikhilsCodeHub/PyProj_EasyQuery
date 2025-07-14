@@ -1,7 +1,6 @@
 import os
-#from dotenv import load_dotenv
-
-#load_dotenv()
+# from dotenv import load_dotenv
+# load_dotenv()
 
 if not os.environ.get("OPENAI_API_KEY"):
 	os.environ["OPENAI_API_KEY"] = os.getenv("OPENAI_API_KEY")

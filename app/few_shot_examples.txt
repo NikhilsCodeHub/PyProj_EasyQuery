@@ -161,3 +161,26 @@ GROUP BY
     provider_name
 ORDER BY
     provider_name;
+
+
+Question 12: Show me claim info and provider for Ozempic for the months Jan and Feb in 2021
+--sql 12
+SELECT
+    claim_id,
+    claim_nbr,
+    member_id,
+    fill_date,
+    quantity,
+    copay_money,
+    net_money,
+    provider_name,
+    provider_location_city
+FROM
+    vw_all_drug_claims_data
+WHERE
+    drug_name LIKE '%ozempic%'
+    STRFTIME('%Y', fill_date) = '2021' AND
+    STRFTIME('%m', fill_date) IN ('01', '02')
+ORDER BY
+    fill_date DESC
+LIMIT 100;
