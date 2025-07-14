@@ -1,7 +1,7 @@
 from typing import Union
 from pydantic import BaseModel
 from fastapi import FastAPI
-from fastapi.responses import FileResponse
+from fastapi.responses import FileResponse, RedirectResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.middleware.cors import CORSMiddleware
 from app.api_qna import graph
@@ -115,7 +115,7 @@ def parse_result_string(result_string: str) -> list[list]:
 
 @app.get("/")
 def read_root():
-    return FileResponse("portal/index.html")
+    return RedirectResponse(url="/portal/index.html", status_code=307)
 
 @app.get("/api/v1/health")
 def health_check():
