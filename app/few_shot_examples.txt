@@ -140,3 +140,24 @@ ORDER BY
     drug_category_description
 LIMIT 100;
 
+Question 10: Show me top 100 drugs and their categories.
+--sql 10
+Select DISTINCT drug_name, drug_category_description 
+From vw_all_drug_claims_data
+limit 100;
+
+Question 11: Show claim counts grouped by channel Long Term Care, Home Infusion, Retail. Also group by  provider name. Show channel name as column headers
+--sql 11
+SELECT
+    provider_name,
+    COUNT(CASE WHEN channel_name = 'Long Term Care' THEN claim_id END) AS Long_Term_Care,
+    COUNT(CASE WHEN channel_name = 'Home Infusion' THEN claim_id END) AS Home_Infusion,
+    COUNT(CASE WHEN channel_name = 'Retail' THEN claim_id END) AS Retail
+FROM
+    vw_all_drug_claims_data
+WHERE
+    channel_name IN ('Long Term Care', 'Home Infusion', 'Retail')
+GROUP BY
+    provider_name
+ORDER BY
+    provider_name;
