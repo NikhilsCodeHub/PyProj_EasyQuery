@@ -3,3 +3,5 @@ app/__pycache__
 .env
 portal/.DS_Store
 .DS_Store
+data/temp.sql
+azure_container_app.sh

@@ -139,3 +139,4 @@ GROUP BY
 ORDER BY
     drug_category_description
 LIMIT 100;
+

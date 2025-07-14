@@ -143,10 +143,10 @@ def read_root():
 def health_check():
     return {"status": "ok"}
 
-@app.get("/main")
-def gethtml():
-    return FileResponse("simple_db_QnA/index.html")
+# @app.get("/main")
+# def gethtml():
+#     return FileResponse("simple_db_QnA/index.html")
 
-@app.get("/app")
-def gethtml():
-    return FileResponse("simple_db_QnA/app.html")
+# @app.get("/app")
+# def gethtml():
+#     return FileResponse("simple_db_QnA/app.html")

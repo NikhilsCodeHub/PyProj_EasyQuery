@@ -159,7 +159,7 @@
           $('#sqlQueryText').text('');
 
           // Replace 'YOUR_API_ENDPOINT' with the actual URL of your FastAPI endpoint
-          const apiEndpoint = 'http://localhost/api/v2/qna'; // e.g., 'http://127.0.0.1:8000/query' or whatever your FastAPI endpoint is
+          const apiEndpoint = '/api/v2/qna'; // e.g., 'http://127.0.0.1:8000/query' or whatever your FastAPI endpoint is
 
           $.ajax({
               url: apiEndpoint,
