@@ -4589,7 +4589,7 @@ input[type=button].btn-block {
 .card-body {
   flex: 1 1 auto;
   min-height: 1px;
-  padding: 1.875rem;
+  padding: 1rem;
 }
 
 .card-title {
@@ -4615,7 +4615,7 @@ input[type=button].btn-block {
 .card-header {
   padding: 0.75rem 1.875rem;
   margin-bottom: 0;
-  background-color: rgba(0, 0, 0, 0.03);
+  background-color: #eeeeee;
   border-bottom: 1px solid #e5e9f2;
 }
 .card-header:first-child {
@@ -4768,6 +4768,7 @@ input[type=button].btn-block {
 .accordion > .card > .card-header {
   border-radius: 0;
   margin-bottom: -1px;
+  background-color: #f8f9fa;
 }
 
 .breadcrumb {
@@ -4840,9 +4841,9 @@ input[type=button].btn-block {
 }
 .page-item.active .page-link {
   z-index: 3;
-  color: #ffffff;
-  background-color: #9e6de0;
-  border-color: #9e6de0;
+  color: #212529;
+  background-color: #fec400;
+  border-color:#121318;
 }
 .page-item.disabled .page-link {
   color: #6c757d;
@@ -12011,7 +12012,7 @@ button {
   margin-bottom: 1rem;
 }
 .accordion-shadow .card-header h2 .btn {
-  background-color: transparent;
+  background-color: #eeeeee;
   color: #9e6de0;
 }
 .accordion-shadow .card-header h2 .btn.collapsed {
@@ -12787,7 +12788,7 @@ code {
 
 /* Header Light */
 .navbar.navbar-light {
-  background-color: #ffffff;
+  background-color: #f8f9fa;
   border-color: #e5e9f2;
 }
 .navbar.navbar-light .sidebar-toggle {
@@ -14411,15 +14412,16 @@ label {
 
 /* Produc Data Table */
 .table.table-hover tbody tr:hover {
-  background-color: #9e6de0;
+  background-color: #1a1c21;
   box-shadow: 0px 10px 18px 0px rgba(55, 103, 208, 0.2);
 }
 .table.table-hover tbody tr:hover td {
-  color: #ffffff;
+  background-color:#31343d;
+  color:#7ce2ef;
 }
 .table.table-hover tbody tr:hover .custom-control-input:checked ~ .custom-control-label::before {
   background-color: #ffffff;
-  color: #9e6de0;
+  color:#0077b5;
 }
 .table.table-hover tbody tr:hover .custom-checkbox .custom-control-input:checked ~ .custom-control-label::after {
   background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 8 8'%3e%3cpath fill='#9e6de0' d='M6.564.75l-3.59 3.612-1.538-1.55L0 4.26 2.974 7.25 8 2.193z'/%3e%3c/svg%3e");

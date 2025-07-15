@@ -39,20 +39,16 @@
                 <button id="sidebar-toggler" class="sidebar-toggle">
                     <span class="sr-only">Toggle navigation</span>
                 </button>
-                <span class="page-title">Easy Query</span>
+                <span class="page-title">EasyQuery</span>
                 </nav>              
             </header>
             <div class="content-wrapper">
                 <div class="container-fluid">
 
                     <div class="row">
-                        <!-- Dataset -->
-                        <div id="dataset-container"></div>                
-                    </div>  
-                    <div class="row">
                             <div class="accordion mt-3" id="questions">
                             <div class="accordion-item">
-                                <h2 class="accordion-header" id="headingQuestions">
+                                <h2 class="accordion-header"  id="headingQuestions">
                                 <button class="accordion-button show" type="button" data-bs-toggle="collapse" data-bs-target="#collapseQuestions" aria-expanded="false" aria-controls="collapseQuestions">
                                     <h4> Sample Questions</h4>
                                 </button>
@@ -89,12 +85,12 @@
 
                             <!-- QnA Agent-->
                             <div class="card card-default" style="width:100%;">
-                                <div class="card-header align-items-center">
+                                <div class="card-header align-items-center" style="padding-top: 15px;background-color: rgb(242, 242, 242);">
                                     <h3 class="">Ai Response</h2>
                                 </div>
                                 <div class="card-body">
                                     <div class="tab-content" id="tableContainer" style="display: none;">
-                                        <table id="myDataTable" class="table table-striped table-bordered table-hover row-border" style="width:100%;">
+                                        <table id="myDataTable" class="table table-striped table-bordered table-hover row-border" style="color:gray;width:100%;">
                                             <thead>
                                                 </thead>
                                             <tbody>
@@ -102,7 +98,7 @@
                                         </table>
                                         <h6 style="color: rgb(122, 1, 1);">* This dataset was randomly generated for demonstration purpose only. None of the details or numbers are real.</h6>
                                     </div>
-                                    <div id="loadingMessage" style="display: none; color: blue;">Loading data...</div>
+                                    <div id="loadingMessage" style="display: none; color: blue;"><h4> Loading data...</h4></div>
                                     <div id="OneLineMessage" style="display: none; color: rgb(2, 44, 10);">...</div>
                                     <div id="errorMessage" style="display: none; color: red;"></div>
                                     
@@ -134,24 +130,24 @@
                         </div>
                         <div class="col-xl-4">
 
-                        <!-- Chat -->
-                        <div class="card card-default chat">
-                            <div class="card-header">
-                            <h3>Question</h2>
+                        <!-- Question -->
+                        <div class="card card-default">
+                            <div class="card-header" style="padding-top: 15px;background-color:  rgb(242, 242, 242);">
+                                <h3>Question</h2>
                             </div>
-                            <div class="chat-footer">
                             <form>
-                                <div class="input-group input-group-chat" style="padding: 10px;">
-                                    <textarea class="form-control" rows="4" id="questionInput" placeholder="Enter your query here (e.g., 'Show Claim count grouped by fill date month for 2021.')"></textarea>
+                                <div class="form-group"style="padding: 5px;">
+                                    <textarea class="form-control textarea-lg" style="background-color: rgb(246, 255, 254);" rows="7" id="questionInput" placeholder="Enter your query here (e.g., 'Show Claim count grouped by fill date month for 2021.')"></textarea>
                                 </div>
-                                <div class="text-center mt-4 mb-5">
+                                <div class="text-center mt-4 mb-4">
                                 <button id="submitQuestion" class="btn btn-primary btn-sl-sm mr-3" type="button"><span
                                         class="mr-2"><i class="fa fa-paper-plane"></i></span> Send</button>
                                 <button id="clearall" class="btn btn-dark btn-sl-sm" type="button" ><span class="mr-2"><i
                                             class="fa fa-times" aria-hidden="true"></i></span> Clear</button>
                                 </div>
                             </form>
-                            </div>
+                        </div> 
+                        <div class="card card-default">
                             <div id="historySection" >
                             <div class="card-header">
                                 <h3>QnA History</h2>
@@ -165,8 +161,13 @@
 
                         </div>
 
-                        </div>
+                        
                     </div>
+                    </div>
+                    <div class="row">
+                        <!-- Dataset -->
+                        <div id="dataset-container"></div>                
+                    </div>  
                 </div>
             </div>
         </div>  
