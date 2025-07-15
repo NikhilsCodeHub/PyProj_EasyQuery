@@ -90,14 +90,16 @@
         })
         .catch(error => console.error('Error loading sidebar:', error));
 
-        fetch('dataset.html')
-        .then(response => response.text())
-        .then(data => {
-          //console.log(document.getElementById('sidebar-container').innerHTML);
-          document.getElementById('dataset-container').innerHTML = data;
-        })
-        .catch(error => console.error('Error loading sidebar:', error));
-        
+        if (!window.location.pathname.includes("design"))
+        {
+            fetch('dataset.html')
+            .then(response => response.text())
+            .then(data => {
+            //console.log(document.getElementById('sidebar-container').innerHTML);
+            document.getElementById('dataset-container').innerHTML = data;
+            })
+            .catch(error => console.error('Error loading sidebar:', error));
+        }
         init_sidebar();   // ---- Initialize the Sidebar
 
         // -- highlight the menu item

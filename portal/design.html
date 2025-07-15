@@ -89,15 +89,16 @@
     <!-- html component loader -->
     <script lang="javascript">
         $(document).ready(function() {
-            fetch('sidebar.html')
-            .then(response => response.text())
-            .then(data => {
-            //console.log(document.getElementById('sidebar-container').innerHTML);
-            document.getElementById('sidebar-container').outerHTML = data;
-            console.log("Sidebar Loaded");
-            })
-            .catch(error => console.error('Error loading sidebar:', error));
-            setTimeout(highlight_menu,100);
+        //     fetch('sidebar.html')
+        //     .then(response => response.text())
+        //     .then(data => {
+        //     //console.log(document.getElementById('sidebar-container').innerHTML);
+        //     document.getElementById('sidebar-container').outerHTML = data;
+        //     console.log("Sidebar Loaded");
+        //     })
+        //     .catch(error => console.error('Error loading sidebar:', error));
+        //     setTimeout(highlight_menu,100);
+        load_sidebar_dataset();
         });
     </script>
 </body>
