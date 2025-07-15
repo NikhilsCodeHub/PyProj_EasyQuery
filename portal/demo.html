@@ -5,6 +5,8 @@
     <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/2.3.2/css/dataTables.dataTables.css">
     <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/buttons/3.2.3/css/buttons.dataTables.css">
     <link rel="stylesheet" type="text/css" href="css/custom.css">
+    <link rel="stylesheet" type="text/css" href="css/style.css">
+    <link href="css/materialdesignicons.min.css" rel="stylesheet" />
 
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 
@@ -23,188 +25,156 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js">  </script>
     <script src="https://cdn.datatables.net/buttons/3.2.3/js/buttons.html5.min.js">  </script>
     <script src="https://cdn.datatables.net/buttons/3.2.3/js/buttons.print.min.js">  </script>
-    <script type="module">
-        import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs';
-        mermaid.initialize({ startOnLoad: true });
-    </script>
-    <style>
-        body {
-            padding-left: 20px;
-            padding-right: 20px;
-            padding-top: 2px;  
-            padding-bottom: 20px;
-            background-color: #f1f3f4;
-        }
 
-        .mermaid {
-            background-color: #f8f9fa;
-            padding: 10px;
-            border-radius: 5px;
-            margin-top: 20px;
-        }
-
-</style>
 </head>
-<body>
-    <!-- Sidebar -->
-    <div id="sidebar-container"></div>
+<body class="navbar-fixed sidebar-fixed" id="body">
+    <div id="main-wrapper">
+        <!-- Sidebar -->
+        <aside class="left-sidebar sidebar-dark" id="left-sidebar">
+            <div id="sidebar-container"></div>
+        </aside>    
+        <div class="page-wrapper" >
+            <header class="main-header" id="header">
+                <nav class="navbar navbar-expand-lg navbar-light" id="navbar" style="justify-content: left;">
+                <button id="sidebar-toggler" class="sidebar-toggle">
+                    <span class="sr-only">Toggle navigation</span>
+                </button>
+                <span class="page-title">Easy Query</span>
+                </nav>              
+            </header>
+            <div class="content-wrapper">
+                <div class="container-fluid">
 
-    <div style="margin-left: 180px;">
-
-        <div class="content-wrap">
-            <div class="container-fluid">
-                <div class="row">
-                    <div class="col-12" style="padding-left:0; padding-right:0;padding-bottom: 20px;">
-                        <div style="background-color: #f1f3f4; padding: 20px 24px; border-radius: 0; margin-left: -12px; margin-right: -12px;border-bottom: solid 2px rgb(148, 147, 147);">
-                            <h1 class="page-header mb-0">EasyQuery</h1>
-                        </div>
-                    </div>
-                </div>
-                <div class="row">
-                    <!-- Dataset -->
-                    <div id="dataset-container"></div>                
-                </div>  
-                <div class="row">
-                        <div class="accordion mt-3" id="questions">
-                        <div class="accordion-item">
-                            <h2 class="accordion-header" id="headingQuestions">
-                            <button class="accordion-button show" type="button" data-bs-toggle="collapse" data-bs-target="#collapseQuestions" aria-expanded="false" aria-controls="collapseQuestions">
-                                <h4> Sample Questions</h4>
-                            </button>
-                            </h2>
-                            <div id="collapseQuestions" class="accordion-collapse show" aria-labelledby="headingQuestions" data-bs-parent="#questions">
-                                <div class="accordion-body">    
-                                    <div class="card-body">
-                                        <div class="basic-list-group">
-                                            <div class="list-group">
-                                                <a href="javascript:void(0)" class="list-group-item list-group-item-action" onclick="copyToQuestionInput(this)">Show claim counts grouped by drug categories for year 2021 and 2022. Show years as headers.</a>
-                                                <a href="javascript:void(0)" class="list-group-item list-group-item-action" onclick="copyToQuestionInput(this)">Show claim counts for drug category Vaccination for year 2021 and 2022 group by provider location state. Show years as headers.</a> 
-                                                <a href="javascript:void(0)" class="list-group-item list-group-item-action" onclick="copyToQuestionInput(this)">Show total copay grouped by drugs categories for Jan, Mar and Jul in 2021. Show months as headers.</a>
-                                                <a href="javascript:void(0)" class="list-group-item list-group-item-action" onclick="copyToQuestionInput(this)">What are total members with claims in Jan of 2021 and 2022</a> 
-                                                <a href="javascript:void(0)" class="list-group-item list-group-item-action" onclick="copyToQuestionInput(this)">Provide Brand vs. Generic Drug Dispensing by Specialty Indicator (with Percentage)</a>                                                     
+                    <div class="row">
+                        <!-- Dataset -->
+                        <div id="dataset-container"></div>                
+                    </div>  
+                    <div class="row">
+                            <div class="accordion mt-3" id="questions">
+                            <div class="accordion-item">
+                                <h2 class="accordion-header" id="headingQuestions">
+                                <button class="accordion-button show" type="button" data-bs-toggle="collapse" data-bs-target="#collapseQuestions" aria-expanded="false" aria-controls="collapseQuestions">
+                                    <h4> Sample Questions</h4>
+                                </button>
+                                </h2>
+                                <div id="collapseQuestions" class="accordion-collapse show" aria-labelledby="headingQuestions" data-bs-parent="#questions">
+                                    <div class="accordion-body">    
+                                        <div class="card-body">
+                                            <div class="basic-list-group">
+                                                <div class="list-group">
+                                                    <a href="javascript:void(0)" class="list-group-item list-group-item-action" onclick="copyToQuestionInput(this)">Show claim counts grouped by drug categories for year 2021 and 2022. Show years as headers.</a>
+                                                    <a href="javascript:void(0)" class="list-group-item list-group-item-action" onclick="copyToQuestionInput(this)">Show claim counts for drug category Vaccination for year 2021 and 2022 group by provider location state. Show years as headers.</a> 
+                                                    <a href="javascript:void(0)" class="list-group-item list-group-item-action" onclick="copyToQuestionInput(this)">Show total copay grouped by drugs categories for Jan, Mar and Jul in 2021. Show months as headers.</a>
+                                                    <a href="javascript:void(0)" class="list-group-item list-group-item-action" onclick="copyToQuestionInput(this)">What are total members with claims in Jan of 2021 and 2022</a> 
+                                                    <a href="javascript:void(0)" class="list-group-item list-group-item-action" onclick="copyToQuestionInput(this)">Provide Brand vs. Generic Drug Dispensing by Specialty Indicator (with Percentage)</a>                                                     
+                                                </div>
                                             </div>
-                                        </div>
-                                        <script>
-                                        function copyToQuestionInput(element) {
-                                            const textarea = document.getElementById('questionInput');
-                                            if (textarea) {
-                                                textarea.value = element.textContent.trim();
-                                                textarea.focus();
+                                            <script>
+                                            function copyToQuestionInput(element) {
+                                                const textarea = document.getElementById('questionInput');
+                                                if (textarea) {
+                                                    textarea.value = element.textContent.trim();
+                                                    textarea.focus();
+                                                }
                                             }
-                                        }
-                                        </script>
-                                    </div>                                                                                   
+                                            </script>
+                                        </div>                                                                                   
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                        </div>                    
-                </div>                                
-                <div class="row" style="margin-top: 20px;width:100%;">
-                    <div class="col-xl-8">
+                            </div>                    
+                    </div>                                
+                    <div class="row" style="margin-top: 20px;width:100%;">
+                        <div class="col-xl-8">
 
-                        <!-- QnA Agent-->
-                        <div class="card card-default" style="width:100%;">
-                            <div class="card-header align-items-center">
-                                <h3 class="">Ai Response</h2>
+                            <!-- QnA Agent-->
+                            <div class="card card-default" style="width:100%;">
+                                <div class="card-header align-items-center">
+                                    <h3 class="">Ai Response</h2>
+                                </div>
+                                <div class="card-body">
+                                    <div class="tab-content" id="tableContainer" style="display: none;">
+                                        <table id="myDataTable" class="table table-striped table-bordered table-hover row-border" style="width:100%;">
+                                            <thead>
+                                                </thead>
+                                            <tbody>
+                                                </tbody>
+                                        </table>
+                                        <h6 style="color: rgb(122, 1, 1);">* This dataset was randomly generated for demonstration purpose only. None of the details or numbers are real.</h6>
+                                    </div>
+                                    <div id="loadingMessage" style="display: none; color: blue;">Loading data...</div>
+                                    <div id="OneLineMessage" style="display: none; color: rgb(2, 44, 10);">...</div>
+                                    <div id="errorMessage" style="display: none; color: red;"></div>
+                                    
+                                    <!-- Token Info Section -->
+                                    <div id="tokenInfoSection" style="display:none; margin-top:10px;">
+                                    <div class="alert alert-info" style="padding: 8px 16px;">
+                                        <span id="tokenInfoText">Input tokens: 0, Output tokens: 0</span>
+                                    </div>
+                                    </div>
+                                    <!-- Collapsible SQL Query Section -->
+                                    <div class="accordion mt-3" id="sqlQueryAccordion" style="display: none;">
+                                    <div class="accordion-item">
+                                        <h2 class="accordion-header" id="headingQuery">
+                                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseQuery" aria-expanded="false" aria-controls="collapseQuery">
+                                            Show SQL Query
+                                        </button>
+                                        </h2>
+                                        <div id="collapseQuery" class="accordion-collapse collapse" aria-labelledby="headingQuery" data-bs-parent="#sqlQueryAccordion">
+                                        <div class="accordion-body">
+                                            <pre id="sqlQueryText" style="white-space: pre-wrap; word-break: break-all; margin:0;"></pre>
+                                        </div>
+                                        </div>
+                                    </div>
+                                    </div>
+
+                                </div>
+                            </div>
+
+                        </div>
+                        <div class="col-xl-4">
+
+                        <!-- Chat -->
+                        <div class="card card-default chat">
+                            <div class="card-header">
+                            <h3>Question</h2>
+                            </div>
+                            <div class="chat-footer">
+                            <form>
+                                <div class="input-group input-group-chat" style="padding: 10px;">
+                                    <textarea class="form-control" rows="4" id="questionInput" placeholder="Enter your query here (e.g., 'Show Claim count grouped by fill date month for 2021.')"></textarea>
+                                </div>
+                                <div class="text-center mt-4 mb-5">
+                                <button id="submitQuestion" class="btn btn-primary btn-sl-sm mr-3" type="button"><span
+                                        class="mr-2"><i class="fa fa-paper-plane"></i></span> Send</button>
+                                <button id="clearall" class="btn btn-dark btn-sl-sm" type="button" ><span class="mr-2"><i
+                                            class="fa fa-times" aria-hidden="true"></i></span> Clear</button>
+                                </div>
+                            </form>
+                            </div>
+                            <div id="historySection" >
+                            <div class="card-header">
+                                <h3>QnA History</h2>
                             </div>
                             <div class="card-body">
-                                <div class="tab-content" id="tableContainer" style="display: none;">
-                                    <table id="myDataTable" class="table table-striped table-bordered table-hover row-border" style="width:100%;">
-                                        <thead>
-                                            </thead>
-                                        <tbody>
-                                            </tbody>
-                                    </table>
-                                    <h6 style="color: rgb(122, 1, 1);">* This dataset was randomly generated for demonstration purpose only. None of the details or numbers are real.</h6>
-                                </div>
-                                <div id="loadingMessage" style="display: none; color: blue;">Loading data...</div>
-                                <div id="OneLineMessage" style="display: none; color: rgb(2, 44, 10);">...</div>
-                                <div id="errorMessage" style="display: none; color: red;"></div>
-                                
-                                <!-- Token Info Section -->
-                                <div id="tokenInfoSection" style="display:none; margin-top:10px;">
-                                <div class="alert alert-info" style="padding: 8px 16px;">
-                                    <span id="tokenInfoText">Input tokens: 0, Output tokens: 0</span>
-                                </div>
-                                </div>
-                                <!-- Collapsible SQL Query Section -->
-                                <div class="accordion mt-3" id="sqlQueryAccordion" style="display: none;">
-                                <div class="accordion-item">
-                                    <h2 class="accordion-header" id="headingQuery">
-                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseQuery" aria-expanded="false" aria-controls="collapseQuery">
-                                        Show SQL Query
-                                    </button>
-                                    </h2>
-                                    <div id="collapseQuery" class="accordion-collapse collapse" aria-labelledby="headingQuery" data-bs-parent="#sqlQueryAccordion">
-                                    <div class="accordion-body">
-                                        <pre id="sqlQueryText" style="white-space: pre-wrap; word-break: break-all; margin:0;"></pre>
-                                    </div>
-                                    </div>
-                                </div>
-                                </div>
-
+                                <ul id="historyList" class="list-group">
+                                <!-- History items will be dynamically added here -->
+                                </ul>
                             </div>
-                        </div>
-
-                    </div>
-                    <div class="col-xl-4">
-
-                    <!-- Chat -->
-                    <div class="card card-default chat">
-                        <div class="card-header">
-                        <h3>Question</h2>
-                        </div>
-                        <div class="chat-footer">
-                        <form>
-                            <div class="input-group input-group-chat" style="padding: 10px;">
-                                <textarea class="form-control" rows="4" id="questionInput" placeholder="Enter your query here (e.g., 'Show Claim count grouped by fill date month for 2021.')"></textarea>
                             </div>
-                            <div class="text-center mt-4 mb-5">
-                            <button id="submitQuestion" class="btn btn-primary btn-sl-sm mr-3" type="button"><span
-                                    class="mr-2"><i class="fa fa-paper-plane"></i></span> Send</button>
-                            <button id="clearall" class="btn btn-dark btn-sl-sm" type="button" ><span class="mr-2"><i
-                                        class="fa fa-times" aria-hidden="true"></i></span> Clear</button>
-                            </div>
-                        </form>
-                        </div>
-                        <div id="historySection" >
-                        <div class="card-header">
-                            <h3>QnA History</h2>
-                        </div>
-                        <div class="card-body">
-                            <ul id="historyList" class="list-group">
-                            <!-- History items will be dynamically added here -->
-                            </ul>
-                        </div>
+
                         </div>
 
-                    </div>
-
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
-        <script src="js/custom.js"></script>
+        </div>  
+    </div>
+    <script src="js/loader.js"></script>
+    <script src="js/custom.js"></script>
 
-  <!-- html component loader -->
-  <script>
 
-      fetch('sidebar.html')
-        .then(response => response.text())
-        .then(data => {
-          //console.log(document.getElementById('sidebar-container').innerHTML);
-          document.getElementById('sidebar-container').innerHTML = data;
-        })
-        .catch(error => console.error('Error loading sidebar:', error));
 
-        fetch('dataset.html')
-        .then(response => response.text())
-        .then(data => {
-          //console.log(document.getElementById('sidebar-container').innerHTML);
-          document.getElementById('dataset-container').innerHTML = data;
-        })
-        .catch(error => console.error('Error loading sidebar:', error));
-
-  </script>
 </body>
 </html>

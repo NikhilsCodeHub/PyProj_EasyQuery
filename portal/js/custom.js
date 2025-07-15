@@ -1,5 +1,5 @@
  questionhistory = []; // Array to store question history'
-
+ console.log("loaded custom.js");
 // -- clear the page when Clear button is clicked
 
   function clear() {
@@ -132,8 +132,12 @@
     showTokenInfo(questionhistory[intHistoryId].token_info || {});
     return 1;
   }
+ 
 
  $(document).ready(function() {
+      load_sidebar_dataset();
+      
+
       $('#clearall').on('click', function() {
         clear();
       });
