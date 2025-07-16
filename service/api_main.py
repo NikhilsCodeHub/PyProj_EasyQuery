@@ -1,16 +1,64 @@
 from typing import Union
 from pydantic import BaseModel
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
 from fastapi.responses import FileResponse, RedirectResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.middleware.cors import CORSMiddleware
+from slowapi import Limiter, _rate_limit_exceeded_handler
+from slowapi.util import get_remote_address
+from slowapi.errors import RateLimitExceeded
+from slowapi.middleware import SlowAPIMiddleware
 from app.api_qna import graph
-
+from service.rate_limit_config import RATE_LIMIT_STRATEGY, DEFAULT_LIMITS, REDIS_CONFIG, get_endpoint_limits
+from service.rate_limit_strategies import (
+    get_ip_address, get_global_key, get_user_id_key, 
+    get_api_key, get_combined_key, get_endpoint_specific_key
+)
+import redis
 import ast
 
+# Initialize Redis connection for rate limiting
+try:
+    redis_client = redis.Redis(**REDIS_CONFIG)
+    redis_client.ping()  # Test connection
+    print("Connected to Redis for rate limiting")
+    storage_uri = f"redis://{REDIS_CONFIG['host']}:{REDIS_CONFIG['port']}"
+except redis.ConnectionError:
+    print("Warning: Redis not available, using in-memory rate limiting")
+    redis_client = None
+    storage_uri = "memory://"
+
+# Select rate limiting key function based on strategy
+def get_rate_limit_key_func():
+    strategy_map = {
+        "ip": get_ip_address,
+        "global": get_global_key,
+        "user_id": get_user_id_key,
+        "api_key": get_api_key,
+        "combined": get_combined_key,
+        "endpoint_specific": get_endpoint_specific_key
+    }
+    return strategy_map.get(RATE_LIMIT_STRATEGY, get_ip_address)
+
+# Initialize rate limiter with configurable strategy
+limiter = Limiter(
+    key_func=get_rate_limit_key_func(),
+    storage_uri=storage_uri,
+    default_limits=DEFAULT_LIMITS
+)
+
+# Get endpoint limits based on current strategy
+ENDPOINT_LIMITS = get_endpoint_limits()
+
+print(f"Rate limiting strategy: {RATE_LIMIT_STRATEGY}")
+print(f"Endpoint limits: {ENDPOINT_LIMITS}")
 
 app = FastAPI()
 
+# Add rate limiting middleware
+app.state.limiter = limiter
+app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
+app.add_middleware(SlowAPIMiddleware)
 
 app.add_middleware(
     CORSMiddleware,
@@ -36,7 +84,8 @@ str_answer = ""
 token_info = {"write_query": {}, "extract_columns": {}, "generate_answer": {}}
 
 @app.post("/api/v2/qna")
-async def qna_response(qna_request: QnARequest):
+@limiter.limit(ENDPOINT_LIMITS["/api/v2/qna"])
+async def qna_response(request: Request, qna_request: QnARequest):
     """
     Endpoint to get the QnA response.
     This will trigger the QnA process and return the result.
@@ -114,11 +163,13 @@ def parse_result_string(result_string: str) -> list[list]:
 #     return {"item_id": item_id, "q": q}
 
 @app.get("/")
-def read_root():
+@limiter.limit(ENDPOINT_LIMITS["/"])
+def read_root(request: Request):
     return RedirectResponse(url="/portal/index.html", status_code=307)
 
 @app.get("/api/v1/health")
-def health_check():
+@limiter.limit(ENDPOINT_LIMITS["/api/v1/health"])
+def health_check(request: Request):
     return {"status": "ok"}
 
 # @app.get("/main")
