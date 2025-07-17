@@ -25,3 +25,29 @@ GROUP BY
 ORDER BY
     drug_category_description
 LIMIT 100;... | Columns: ['drug_category_description', '2021', '2022']... | Results: 88 rows | Answer: Result has too many value to send to LLM. Use datatable to show data. tuples 1,length 2717... | Tokens: 2357in/140out
+2025-07-16 23:51:32 | IP: 127.0.0.1 | Question: Show total copay grouped by drugs categories for Jan, Mar and Jul in 2021. Show months as headers.... | Query: SELECT
+    drug_category_description,
+    SUM(CASE WHEN STRFTIME('%m', fill_date) = '01' THEN round(copay_money,2) ELSE 0 END) AS January,
+    SUM(CASE WHEN STRFTIME('%m', fill_date) = '03' THEN round(copay_money,2) ELSE 0 END) AS March,
+    SUM(CASE WHEN STRFTIME('%m', fill_date) = '07' THEN round(copay_money,2) ELSE 0 END) AS July
+FROM
+    vw_all_drug_claims_data
+WHERE
+    STRFTIME('%Y', fill_date) = '2021' AND STRFTIME('%m', fill_date) IN ('01', '03', '07')
+GROUP BY
+    drug_category_description
+ORDER BY
+    drug_category_description
+LIMIT 100;... | Columns: ['drug_category_description', 'January', 'March', 'July']... | Results: 81 rows | Answer: Result has too many value to send to LLM. Use datatable to show data. tuples 1,length 3515... | Tokens: 2422in/203out
+2025-07-16 23:59:00 | IP: 127.0.0.1 | Question: What are total members with claims in Jan of 2021 and 2022... | Query: SELECT
+    STRFTIME('%Y', fill_date) AS fill_year,
+    COUNT(DISTINCT member_id) AS total_members
+FROM
+    vw_all_drug_claims_data
+WHERE
+    STRFTIME('%m', fill_date) = '01' AND (STRFTIME('%Y', fill_date) = '2021' OR STRFTIME('%Y', fill_date) = '2022')
+GROUP BY
+    fill_year
+ORDER BY
+    fill_year;... | Columns: ['fill_year', 'total_members']... | Results: 2 rows | Tokens: 2501in/152out
+2025-07-16 23:59:10 | IP: 127.0.0.1 | Question: What are total members ?... | Query: SELECT COUNT(DISTINCT member_id) AS total_members FROM vw_all_drug_claims_data;... | Columns: ['total_members']... | Results: 1 rows | Tokens: 2307in/42out

@@ -101,25 +101,27 @@ def log_qna_request(request_data, client_ip):
         # Create log entry with timestamp
         timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         
-        log_entry = {
-            "timestamp": timestamp,
-            "client_ip": client_ip,
-            "question": request_data.get("question", ""),
-            "query": request_data.get("query", ""),
-            "columns": request_data.get("columns", ""),
-            "result_count": len(request_data.get("result", [])) if request_data.get("result") else 0,
-            "answer": request_data.get("answer", ""),
-            "input_tokens": request_data.get("token_info", {}).get("input_tokens", "0"),
-            "output_tokens": request_data.get("token_info", {}).get("output_tokens", "0")
-        }
-        
+        # print(f"Log Entry begin:")
+        # log_entry = {
+        #     "timestamp": timestamp,
+        #     "client_ip": client_ip,
+        #     "question": request_data.get("question", ""),
+        #     "query": request_data.get("query", ""),
+        #     "columns": request_data.get("columns", ""),
+        #     "result_count": len(request_data.get("result", [])) if request_data.get("result") else 0,
+        #     #"answer": request_data.get("answer", ""),
+        #     "input_tokens": request_data.get("token_info", {}).get("input_tokens", "0"),
+        #     "output_tokens": request_data.get("token_info", {}).get("output_tokens", "0")
+        # }
+        # print(f"Log Entry end: {log_entry}")
+
         # Write to log file
         with open(log_file, "a", encoding="utf-8") as f:
             f.write(f"{timestamp} | IP: {client_ip} | Question: {request_data.get('question', '')[:500]}... | "
                    f"Query: {request_data.get('query', '')[:1000]}... | "
                    f"Columns: {request_data.get('columns', '')[:50]}... | "
                    f"Results: {len(request_data.get('result', []))} rows | "
-                   f"Answer: {request_data.get('answer', '')[:200]}... | "
+                   #f"Answer: {request_data.get('answer', '')[:200]}... | "  ## Commented as it was having issue parsing.
                    f"Tokens: {request_data.get('token_info', {}).get('input_tokens', '0')}in/{request_data.get('token_info', {}).get('output_tokens', '0')}out\n")
         
         print(f"Logged QnA request to {log_file}")
