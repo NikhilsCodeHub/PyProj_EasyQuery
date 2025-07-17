@@ -1,0 +1,27 @@
+2025-07-16 22:57:54 | IP: 127.0.0.1 | Question: Show total copay grouped by drugs categories for Jan, Mar and Jul in 2021. Show months as headers.... | Query: SELECT
+    drug_category_description,
+    SUM(CASE WHEN STRFTIME('%m', fill_date) = '01' THEN round(copay_money,2) ELSE 0 END) AS January,
+    SUM(CASE WHEN STRFTIME('%m', fill_date) = '03' THEN round(copay_money,2) ELSE 0 END) AS March,
+    SUM(CASE WHEN STRFTIME('%m', fill_date) = '07' THEN round(copay_money,2) ELSE 0 END) AS July
+FROM
+    vw_all_drug_claims_data
+WHERE
+    STRFTIME('%Y', fill_date) = '2021' AND STRFTIME('%m', fill_date) IN ('01', '03', '07')
+GROUP BY
+    drug_category_description
+ORDER BY
+    drug_category_description
+LIMIT 100;... | Columns: ['drug_category_description', 'January', 'March', 'July']... | Results: 81 rows | Answer: Result has too many value to send to LLM. Use datatable to show data. tuples 1,length 3515... | Tokens: 2422in/216out
+2025-07-16 22:58:04 | IP: 127.0.0.1 | Question: Show claim counts grouped by drug categories for year 2021 and 2022. Show years as headers.... | Query: SELECT
+    drug_category_description,
+    COUNT(CASE WHEN STRFTIME('%Y', fill_date) = '2021   ' THEN claim_id END) AS "2021",
+    COUNT(CASE WHEN STRFTIME('%Y', fill_date) = '2022' THEN claim_id END) AS "2022"
+FROM
+    vw_all_drug_claims_data
+WHERE
+    STRFTIME('%Y', fill_date) IN ('2021', '2022')
+GROUP BY
+    drug_category_description
+ORDER BY
+    drug_category_description
+LIMIT 100;... | Columns: ['drug_category_description', '2021', '2022']... | Results: 88 rows | Answer: Result has too many value to send to LLM. Use datatable to show data. tuples 1,length 2717... | Tokens: 2357in/140out

@@ -38,6 +38,25 @@
             margin-top: 20px;
         }
 
+        .visit-counter {
+            background-color: #f8f9fa;
+            padding: 8px 12px;
+            border-radius: 20px;
+            font-size: 14px;
+            color: #6c757d;
+            border: 1px solid #dee2e6;
+        }
+
+        .visit-counter i {
+            margin-right: 5px;
+            color: #007bff;
+        }
+
+        #unique-visitors-count, #total-visits-count {
+            font-weight: bold;
+            color: #495057;
+        }
+
 </style>
 </head>
 <body class="navbar-fixed sidebar-fixed" id="body">
@@ -48,11 +67,13 @@
         </aside>    
         <div class="page-wrapper" >
             <header class="main-header" id="header">
-                <nav class="navbar navbar-expand-lg navbar-light" id="navbar" style="justify-content: left;">
-                <button id="sidebar-toggler" class="sidebar-toggle">
-                    <span class="sr-only">Toggle navigation</span>
-                </button>
-                <span class="page-title">EasyQuery</span>
+                <nav class="navbar navbar-expand-lg navbar-light" id="navbar" style="justify-content: space-between;">
+                <div class="d-flex align-items-center">
+                    <button id="sidebar-toggler" class="sidebar-toggle">
+                        <span class="sr-only">Toggle navigation</span>
+                    </button>
+                    <span class="page-title">EasyQuery</span>
+                </div>
                 </nav>              
             </header>
             <div class="content-wrapper">
@@ -82,6 +103,14 @@
                         <div id="dataset-container"></div>
                     </div>                
                 </div>
+                <div class="d-flex align-items-center">
+                    <span class="visit-counter me-3" id="unique-visitors-counter">
+                        <i class="mdi mdi-account-multiple"></i> Unique Visitors: <span id="unique-visitors-count">Loading...</span>
+                    </span>
+                    <span class="visit-counter" id="total-visits-counter">
+                        <i class="mdi mdi-eye"></i> Total Visits: <span id="total-visits-count">Loading...</span>
+                    </span>
+                </div>                
             </div>
         </div>
 
@@ -89,7 +118,22 @@
 <script lang="javascript">
      $(document).ready(function() {
       load_sidebar_dataset();
+      loadVisitCount();
      });
+
+     function loadVisitCount() {
+         fetch('/api/v1/visit-count')
+             .then(response => response.json())
+             .then(data => {
+                 document.getElementById('unique-visitors-count').textContent = data.unique_visitors.toLocaleString();
+                 document.getElementById('total-visits-count').textContent = data.total_visits.toLocaleString();
+             })
+             .catch(error => {
+                 console.error('Error fetching visit count:', error);
+                 document.getElementById('unique-visitors-count').textContent = 'Error';
+                 document.getElementById('total-visits-count').textContent = 'Error';
+             });
+     }
 </script>
 
 </body>

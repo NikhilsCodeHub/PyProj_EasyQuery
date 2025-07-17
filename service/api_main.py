@@ -16,6 +16,9 @@ from service.rate_limit_strategies import (
 )
 import redis
 import ast
+import json
+import os
+from datetime import datetime
 
 # Initialize Redis connection for rate limiting
 try:
@@ -44,7 +47,7 @@ def get_rate_limit_key_func():
 limiter = Limiter(
     key_func=get_rate_limit_key_func(),
     storage_uri=storage_uri,
-    default_limits=DEFAULT_LIMITS
+    default_limits=DEFAULT_LIMITS, enabled=True
 )
 
 # Get endpoint limits based on current strategy
@@ -83,6 +86,48 @@ str_result = ""
 str_answer = ""
 token_info = {"write_query": {}, "extract_columns": {}, "generate_answer": {}}
 
+def log_qna_request(request_data, client_ip):
+    """
+    Log QnA request and response data to a text file with timestamp
+    """
+    try:
+        # Determine log directory - use Azure file share if available, otherwise local
+        # log_dir = "/mnt/azurefiles/logs" if os.path.exists("/mnt/azurefiles/logs") else "logs"
+        # os.makedirs(log_dir, exist_ok=True)
+        
+        log_dir = "log"
+        log_file = os.path.join(log_dir, "qna_requests.log")
+        
+        # Create log entry with timestamp
+        timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        
+        log_entry = {
+            "timestamp": timestamp,
+            "client_ip": client_ip,
+            "question": request_data.get("question", ""),
+            "query": request_data.get("query", ""),
+            "columns": request_data.get("columns", ""),
+            "result_count": len(request_data.get("result", [])) if request_data.get("result") else 0,
+            "answer": request_data.get("answer", ""),
+            "input_tokens": request_data.get("token_info", {}).get("input_tokens", "0"),
+            "output_tokens": request_data.get("token_info", {}).get("output_tokens", "0")
+        }
+        
+        # Write to log file
+        with open(log_file, "a", encoding="utf-8") as f:
+            f.write(f"{timestamp} | IP: {client_ip} | Question: {request_data.get('question', '')[:500]}... | "
+                   f"Query: {request_data.get('query', '')[:1000]}... | "
+                   f"Columns: {request_data.get('columns', '')[:50]}... | "
+                   f"Results: {len(request_data.get('result', []))} rows | "
+                   f"Answer: {request_data.get('answer', '')[:200]}... | "
+                   f"Tokens: {request_data.get('token_info', {}).get('input_tokens', '0')}in/{request_data.get('token_info', {}).get('output_tokens', '0')}out\n")
+        
+        print(f"Logged QnA request to {log_file}")
+        
+    except Exception as e:
+        print(f"Error logging QnA request: {e}")
+
+
 @app.post("/api/v2/qna")
 @limiter.limit(ENDPOINT_LIMITS["/api/v2/qna"])
 async def qna_response(request: Request, qna_request: QnARequest):
@@ -115,13 +160,27 @@ async def qna_response(request: Request, qna_request: QnARequest):
     str_parsedResult = [] if not str_result else parse_result_string(str_result)
     str_parsedResult = format_numeric_values(str_parsedResult)
 
-    return {
+    # Prepare response data
+    response_data = {
         "query": str_query,
         "columns": str_columns,
         "result": str_parsedResult,
         "answer": str_answer,
         "token_info": {"input_tokens": str(input_tokens), "output_tokens": str(output_tokens)}
+    }
+    
+    # Log the request and response data
+    try:
+        client_ip = get_remote_address(request)
+        log_data = {
+            "question": input_question,
+            **response_data
         }
+        log_qna_request(log_data, client_ip)
+    except Exception as e:
+        print(f"Error logging request: {e}")
+    
+    return response_data
 
 def format_numeric_values(data):
     formatted = []
@@ -171,6 +230,30 @@ def read_root(request: Request):
 @limiter.limit(ENDPOINT_LIMITS["/api/v1/health"])
 def health_check(request: Request):
     return {"status": "ok"}
+
+# Visitor tracking (in production, use a database or Redis)
+unique_visitors = set()
+total_page_visits = 0
+
+@app.get("/api/v1/visit-count")
+@limiter.limit("100 per minute")  # More lenient for visit counter
+def get_visit_count(request: Request):
+    global unique_visitors, total_page_visits
+    
+    # Get the client's IP address
+    client_ip = get_remote_address(request)
+    
+    # Add IP to the set (automatically handles uniqueness)
+    unique_visitors.add(client_ip)
+    
+    # Increment total page visits
+    total_page_visits += 1
+    
+    # Return both counts
+    return {
+        "unique_visitors": len(unique_visitors),
+        "total_visits": total_page_visits
+    }
 
 # @app.get("/main")
 # def gethtml():

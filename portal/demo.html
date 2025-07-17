@@ -25,7 +25,27 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js">  </script>
     <script src="https://cdn.datatables.net/buttons/3.2.3/js/buttons.html5.min.js">  </script>
     <script src="https://cdn.datatables.net/buttons/3.2.3/js/buttons.print.min.js">  </script>
+    <style>
+            .visit-counter {
+                background-color: #f8f9fa;
+                padding: 8px 12px;
+                border-radius: 20px;
+                font-size: 14px;
+                color: #6c757d;
+                border: 1px solid #dee2e6;
+            }
 
+            .visit-counter i {
+                margin-right: 5px;
+                color: #007bff;
+            }
+
+            #unique-visitors-count, #total-visits-count {
+                font-weight: bold;
+                color: #495057;
+            }
+
+    </style>
 </head>
 <body class="navbar-fixed sidebar-fixed" id="body">
     <div id="main-wrapper">
@@ -169,12 +189,35 @@
                         <div id="dataset-container"></div>                
                     </div>  
                 </div>
+                <div class="d-flex align-items-center">
+                    <span class="visit-counter me-3" id="unique-visitors-counter">
+                        <i class="mdi mdi-account-multiple"></i> Unique Visitors: <span id="unique-visitors-count">Loading...</span>
+                    </span>
+                    <span class="visit-counter" id="total-visits-counter">
+                        <i class="mdi mdi-eye"></i> Total Visits: <span id="total-visits-count">Loading...</span>
+                    </span>
+                </div>                
             </div>
         </div>  
     </div>
     <script src="js/loader.js"></script>
     <script src="js/custom.js"></script>
-
+<script>
+     function loadVisitCount() {
+         fetch('/api/v1/visit-count')
+             .then(response => response.json())
+             .then(data => {
+                 document.getElementById('unique-visitors-count').textContent = data.unique_visitors.toLocaleString();
+                 document.getElementById('total-visits-count').textContent = data.total_visits.toLocaleString();
+             })
+             .catch(error => {
+                 console.error('Error fetching visit count:', error);
+                 document.getElementById('unique-visitors-count').textContent = 'Error';
+                 document.getElementById('total-visits-count').textContent = 'Error';
+             });
+     }
+loadVisitCount();
+</script>
 
 
 </body>

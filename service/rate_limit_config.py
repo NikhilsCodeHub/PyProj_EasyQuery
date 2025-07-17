@@ -64,6 +64,6 @@ REDIS_CONFIG = {
 # Rate limit messages
 RATE_LIMIT_MESSAGE = {
     "error": "Rate limit exceeded",
-    "message": "Too many requests. Please try again later.",
+    "message": "Too many requests. Please try again in few mins.",
     "retry_after": "Check the Retry-After header for when to retry"
 }
