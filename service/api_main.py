@@ -14,6 +14,8 @@ from service.rate_limit_strategies import (
     get_ip_address, get_global_key, get_user_id_key, 
     get_api_key, get_combined_key, get_endpoint_specific_key
 )
+from slowapi.util import get_ipaddr
+
 import redis
 import ast
 import json
@@ -34,14 +36,14 @@ except redis.ConnectionError:
 # Select rate limiting key function based on strategy
 def get_rate_limit_key_func():
     strategy_map = {
-        "ip": get_ip_address,
+        "ip": get_ipaddr,
         "global": get_global_key,
         "user_id": get_user_id_key,
         "api_key": get_api_key,
         "combined": get_combined_key,
         "endpoint_specific": get_endpoint_specific_key
     }
-    return strategy_map.get(RATE_LIMIT_STRATEGY, get_ip_address)
+    return strategy_map.get(RATE_LIMIT_STRATEGY, get_ipaddr)
 
 # Initialize rate limiter with configurable strategy
 limiter = Limiter(
@@ -173,7 +175,7 @@ async def qna_response(request: Request, qna_request: QnARequest):
     
     # Log the request and response data
     try:
-        client_ip = get_remote_address(request)
+        client_ip = get_ipaddr(request)
         log_data = {
             "question": input_question,
             **response_data
