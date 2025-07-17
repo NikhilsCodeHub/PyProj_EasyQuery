@@ -347,3 +347,20 @@
         }
     });
 }
+
+function getIP()
+{
+  fetch("https://api.ipify.org/?format=json")
+  .then(response => response.json())
+  .then(data => {
+    console.log("Client's Public IP Address:", data.ip);
+    // You can then use data.ip for various purposes
+    // document.getElementById("ip-display").innerText = "Your IP: " + data.ip;
+    return data.ip;
+  })
+  .catch(error => {
+    console.error("Error fetching IP address:", error);
+    return ("Error fetching IP address:" + " - " + error);
+  });
+
+}
