@@ -185,25 +185,3 @@ graph = graph_builder.compile()
 ## ------
 
 
-
-
-""" 
-for step in graph.stream(
-    {"question": "Which members have the highest total cost?"}, stream_mode="updates"
-#    {"question": "Can we see a breakdown of Aerosmith's revenue by album or track for each of those years to identify their top-performing content? ?"}, stream_mode="updates"
-):
-    print("Step:", step)
-    if "write_query" in step:
-        str_query = step["write_query"]["query"]
-    if "execute_query" in step:
-        str_result = step["execute_query"]["result"]
-    if "generate_answer" in step:
-        str_answer = step["generate_answer"]["answer"]
-    # if "Followup_Questions" in step:
-    #     followup_questions = step["FollowupQuestions"]["Followup_Questions"]
-    print("Query :", str_query)
-    print("Result :", str_result)
-    print("Answer :", str_answer)
-    # print("Followup Questions :", followup_questions)
- """
-
