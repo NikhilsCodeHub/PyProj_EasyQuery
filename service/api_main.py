@@ -49,7 +49,7 @@ def get_rate_limit_key_func():
 limiter = Limiter(
     key_func=get_rate_limit_key_func(),
     storage_uri=storage_uri,
-    default_limits=DEFAULT_LIMITS, enabled=True
+    default_limits=DEFAULT_LIMITS, enabled=False
 )
 
 # Get endpoint limits based on current strategy
