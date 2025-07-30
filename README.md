@@ -44,7 +44,7 @@ The application will be accessible at `https://localhost:8123`.
 
 ```json
 {
-  "question": "How many claims were filed in Jan through Jun of 2021 related to category "Eye Disorders". Show months as headers"
+  "question": "How many claims were filed in Jan through Jun of 2021 related to category 'Eye Disorders'. Show months as headers"
 }
 ```
 
