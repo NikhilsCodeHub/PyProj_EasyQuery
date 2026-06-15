@@ -1,6 +1,6 @@
 # EasyQuery
 
-This project implements a simple REST API that allows users to submit text questions and receive responses on their dataset in both JSON format.
+This project demonstrates how using LLM inference along with langchain framework, we can provide ability to ask questions about a dataset in natural language and the output is data table related to the user's question fully automated without needing to write SQL queries.
 
 # Demo Link
 https://easyquery-app.happydune-f5c9b622.eastus2.azurecontainerapps.io/portal/demo.html
